@@ -15,3 +15,9 @@ spring:
 
 logging.level:
   org.hibernate.SQL: debug
+
+oauth:
+  kakao:
+    app-id: ${KAKAO_APP_ID}
+  google:
+    app-id: ${GOOGLE_APP_ID}
