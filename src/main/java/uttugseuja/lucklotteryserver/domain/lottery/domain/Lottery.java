@@ -37,5 +37,4 @@ public class Lottery {
     private Integer fourthNum;
     private Integer fifthNum;
     private Integer sixthNum;
-    private Integer bonusNum;
 }
