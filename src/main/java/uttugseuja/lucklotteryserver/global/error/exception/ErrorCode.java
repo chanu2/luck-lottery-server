@@ -7,6 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 
+    /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
+    INVALID_TOKEN(401, "토큰이 유효하지 않습니다.")
     ;
 
     private int status;
