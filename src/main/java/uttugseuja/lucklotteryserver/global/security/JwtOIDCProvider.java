@@ -14,6 +14,12 @@ public class JwtOIDCProvider {
 
     private final String KID = "kid";
 
+    public String getKidFromParsedJwtHeader(String token, String iss, String aud) {
+
+        String kid = (String) getRemovedSignatureParsedJwt(token, iss, aud).getHeader().get(KID);
+        return kid;
+    }
+
     private String removeSignatureFromToken(String token) {
         String[] splitToken = token.split("\\.");
         if (splitToken.length != 3) throw InvalidTokenException.EXCEPTION;
