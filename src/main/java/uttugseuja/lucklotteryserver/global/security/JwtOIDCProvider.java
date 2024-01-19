@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import uttugseuja.lucklotteryserver.domain.credential.service.OIDCDecodePayload;
 import uttugseuja.lucklotteryserver.global.exception.ExpiredTokenException;
 import uttugseuja.lucklotteryserver.global.exception.InvalidTokenException;
 
@@ -43,6 +44,30 @@ public class JwtOIDCProvider {
                     .parseClaimsJwt(removeSignatureFromToken(token));
             return parsedJwt;
 
+        } catch (ExpiredJwtException e) {
+            throw ExpiredTokenException.EXCEPTION;
+        } catch (Exception e) {
+            log.error(e.toString());
+            throw InvalidTokenException.EXCEPTION;
+        }
+    }
+
+    public OIDCDecodePayload getOIDCTokenBody(String token, String modulus, String exponent) {
+        Claims body = getOIDCTokenJws(token, modulus, exponent).getBody();
+        return new OIDCDecodePayload(
+                body.getIssuer(),
+                body.getAudience(),
+                body.getSubject(),
+                body.get("email", String.class),
+                body.get("profile",String.class));
+    }
+
+    public Jws<Claims> getOIDCTokenJws(String token, String modulus, String exponent) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getRSAPublicKey(modulus, exponent))
+                    .build()
+                    .parseClaimsJws(token);
         } catch (ExpiredJwtException e) {
             throw ExpiredTokenException.EXCEPTION;
         } catch (Exception e) {
