@@ -7,6 +7,14 @@ import org.springframework.stereotype.Component;
 import uttugseuja.lucklotteryserver.global.exception.ExpiredTokenException;
 import uttugseuja.lucklotteryserver.global.exception.InvalidTokenException;
 
+import java.math.BigInteger;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Base64;
+
 @RequiredArgsConstructor
 @Component
 @Slf4j
@@ -42,6 +50,19 @@ public class JwtOIDCProvider {
             throw InvalidTokenException.EXCEPTION;
         }
     }
+
+
+    private PublicKey getRSAPublicKey(String modulus, String exponent)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
+
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+
+        BigInteger n = new BigInteger(1, Base64.getDecoder().decode(modulus));
+        BigInteger e = new BigInteger(1, Base64.getDecoder().decode(exponent));
+        RSAPublicKeySpec keySpec = new RSAPublicKeySpec(n,e);
+        return keyFactory.generatePublic(keySpec);
+    }
+
 
 
 
