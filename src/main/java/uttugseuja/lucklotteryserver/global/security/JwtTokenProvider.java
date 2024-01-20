@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uttugseuja.lucklotteryserver.domain.user.domain.AccountRole;
+import uttugseuja.lucklotteryserver.global.exception.ExpiredTokenException;
+import uttugseuja.lucklotteryserver.global.exception.InvalidTokenException;
 import uttugseuja.lucklotteryserver.global.property.JwtProperties;
 
 import java.nio.charset.StandardCharsets;
@@ -35,6 +37,17 @@ public class JwtTokenProvider {
         final Date refreshTokenExpiresIn =
                 new Date(issuedAt.getTime() + jwtProperties.getRefreshExp() * 1000);
         return createRefreshToken(id, issuedAt, refreshTokenExpiresIn);
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String rawHeader = request.getHeader(jwtProperties.getHeader());
+
+        if (rawHeader != null
+                && rawHeader.length() > jwtProperties.getPrefix().length()
+                && rawHeader.startsWith(jwtProperties.getPrefix())) {
+            return rawHeader.substring(jwtProperties.getPrefix().length() + 1);
+        }
+        return null;
     }
 
     private String createAccessToken(
