@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import uttugseuja.lucklotteryserver.domain.lottery.exception.BadRoundException;
 import uttugseuja.lucklotteryserver.global.api.client.WinningLotteryClient;
 import uttugseuja.lucklotteryserver.global.api.dto.WinningLotteryDto;
 
@@ -16,13 +17,17 @@ public class LotteryService {
     private final WinningLotteryClient winningLotteryClient;
     private static final String method = "getLottoNumber";
 
-    public WinningLotteryDto getWinningLottery(Integer round) throws JsonProcessingException {
+    public WinningLotteryDto getWinningLottery(Integer round) {
         String json = winningLotteryClient.getWinningLotteryInfo(method, round);
         return deserialization(json);
     }
 
-    private WinningLotteryDto deserialization(String json) throws JsonProcessingException {
+    private WinningLotteryDto deserialization(String json) {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(json, WinningLotteryDto.class);
+        try{
+            return objectMapper.readValue(json, WinningLotteryDto.class);
+        } catch (JsonProcessingException e) {
+            throw BadRoundException.EXCEPTION;
+        }
     }
 }
