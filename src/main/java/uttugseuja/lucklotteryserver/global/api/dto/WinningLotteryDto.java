@@ -1,12 +1,9 @@
 package uttugseuja.lucklotteryserver.global.api.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class WinningLotteryDto {
 
