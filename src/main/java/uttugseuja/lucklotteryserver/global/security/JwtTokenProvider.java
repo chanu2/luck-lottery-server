@@ -4,11 +4,15 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import uttugseuja.lucklotteryserver.domain.user.domain.AccountRole;
 import uttugseuja.lucklotteryserver.global.exception.ExpiredTokenException;
 import uttugseuja.lucklotteryserver.global.exception.InvalidTokenException;
 import uttugseuja.lucklotteryserver.global.property.JwtProperties;
+import uttugseuja.lucklotteryserver.global.security.auth.AuthDetails;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -48,6 +52,24 @@ public class JwtTokenProvider {
             return rawHeader.substring(jwtProperties.getPrefix().length() + 1);
         }
         return null;
+    }
+
+    public Authentication getAuthentication(String token) {
+        String id = getJws(token).getBody().getSubject();
+        String role = (String) getJws(token).getBody().get(ROLE);
+        UserDetails userDetails = new AuthDetails(id, role);
+        return new UsernamePasswordAuthenticationToken(
+                userDetails, "", userDetails.getAuthorities());
+    }
+
+    private Jws<Claims> getJws(String token) {
+        try {
+            return Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token);
+        } catch (ExpiredJwtException e) {
+            throw ExpiredTokenException.EXCEPTION;
+        } catch (Exception e) {
+            throw InvalidTokenException.EXCEPTION;
+        }
     }
 
     private String createAccessToken(
