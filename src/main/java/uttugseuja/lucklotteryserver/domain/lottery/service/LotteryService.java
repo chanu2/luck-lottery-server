@@ -107,6 +107,15 @@ public class LotteryService {
         return new LotteryResponse(lottery.getLotteryBaseInfoVo());
     }
 
+    private Boolean checkBeforeRecentRound(Lottery lottery) {
+        int recentRound = getRecentRound();
+
+        if(recentRound >= lottery.getRound()) {
+            return true;
+        }
+        return false;
+    }
+
     private Rank calLotteryRank(Lottery lottery) {
         List<Integer> correctNumbers = getCorrectNumbers(lottery);
 
