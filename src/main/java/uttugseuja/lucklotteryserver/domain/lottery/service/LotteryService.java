@@ -118,4 +118,18 @@ public class LotteryService {
         }};
     }
 
+    private List<Integer> getWinningLotteryNumbers(Lottery lottery) {
+        WinningLotteryDto winningLottery = getWinningLottery(lottery.getRound());
+
+        return new ArrayList<>(){{
+            add(winningLottery.getDrwtNo1());
+            add(winningLottery.getDrwtNo2());
+            add(winningLottery.getDrwtNo3());
+            add(winningLottery.getDrwtNo4());
+            add(winningLottery.getDrwtNo5());
+            add(winningLottery.getDrwtNo6());
+            add(winningLottery.getBnusNo());
+        }};
+    }
+
 }
