@@ -11,6 +11,7 @@ import uttugseuja.lucklotteryserver.domain.lottery.exception.BadRoundException;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.LotteryResponse;
 import uttugseuja.lucklotteryserver.global.api.client.WinningLotteryClient;
 import uttugseuja.lucklotteryserver.global.api.dto.WinningLotteryDto;
+import uttugseuja.lucklotteryserver.global.common.Rank;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -104,5 +105,79 @@ public class LotteryService {
 
     private LotteryResponse getLotteryResponse(Lottery lottery) {
         return new LotteryResponse(lottery.getLotteryBaseInfoVo());
+    }
+
+    private Boolean checkBeforeRecentRound(Lottery lottery) {
+        int recentRound = getRecentRound();
+
+        if(recentRound >= lottery.getRound()) {
+            return true;
+        }
+        return false;
+    }
+
+    private Rank calLotteryRank(Lottery lottery) {
+        List<Integer> correctNumbers = getCorrectNumbers(lottery);
+
+        int correctSize = correctNumbers.size();
+        if(correctSize == 6) {
+            Integer bonusNumber = getBonusNumber(lottery);
+
+            if(correctNumbers.contains(bonusNumber)) {
+                return Rank.SECOND;
+            } else {
+                return Rank.FIFTH;
+            }
+        } else if(correctSize == 5) {
+            return Rank.THIRD;
+        } else if(correctSize == 4) {
+            return Rank.FOURTH;
+        } else if(correctSize == 3) {
+            return Rank.FIFTH;
+        }
+        return Rank.NONE;
+    }
+
+    private List<Integer> getCorrectNumbers(Lottery lottery) {
+        List<Integer> lotteryNumbers = getLotteryNumbers(lottery);
+        List<Integer> winningLotteryNumbers = getWinningLotteryNumbers(lottery);
+        List<Integer> correctNumbers = new ArrayList<>();
+
+        for(Integer number : lotteryNumbers) {
+            if(winningLotteryNumbers.contains(number)) {
+                correctNumbers.add(number);
+            }
+        }
+
+        return correctNumbers;
+    }
+
+    private List<Integer> getLotteryNumbers(Lottery lottery) {
+        return new ArrayList<>(){{
+            add(lottery.getFirstNum());
+            add(lottery.getSecondNum());
+            add(lottery.getThirdNum());
+            add(lottery.getFourthNum());
+            add(lottery.getFifthNum());
+            add(lottery.getSixthNum());
+        }};
+    }
+
+    private List<Integer> getWinningLotteryNumbers(Lottery lottery) {
+        WinningLotteryDto winningLottery = getWinningLottery(lottery.getRound());
+
+        return new ArrayList<>(){{
+            add(winningLottery.getDrwtNo1());
+            add(winningLottery.getDrwtNo2());
+            add(winningLottery.getDrwtNo3());
+            add(winningLottery.getDrwtNo4());
+            add(winningLottery.getDrwtNo5());
+            add(winningLottery.getDrwtNo6());
+            add(winningLottery.getBnusNo());
+        }};
+    }
+
+    private Integer getBonusNumber(Lottery lottery) {
+        return getWinningLottery(lottery.getRound()).getBnusNo();
     }
 }
