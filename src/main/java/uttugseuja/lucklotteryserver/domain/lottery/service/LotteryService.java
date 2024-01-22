@@ -107,6 +107,20 @@ public class LotteryService {
         return new LotteryResponse(lottery.getLotteryBaseInfoVo());
     }
 
+    private List<Integer> getCorrectNumbers(Lottery lottery) {
+        List<Integer> lotteryNumbers = getLotteryNumbers(lottery);
+        List<Integer> winningLotteryNumbers = getWinningLotteryNumbers(lottery);
+        List<Integer> correctNumbers = new ArrayList<>();
+
+        for(Integer number : lotteryNumbers) {
+            if(winningLotteryNumbers.contains(number)) {
+                correctNumbers.add(number);
+            }
+        }
+
+        return correctNumbers;
+    }
+
     private List<Integer> getLotteryNumbers(Lottery lottery) {
         return new ArrayList<>(){{
             add(lottery.getFirstNum());
@@ -131,5 +145,4 @@ public class LotteryService {
             add(winningLottery.getBnusNo());
         }};
     }
-
 }
