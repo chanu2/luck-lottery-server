@@ -107,6 +107,28 @@ public class LotteryService {
         return new LotteryResponse(lottery.getLotteryBaseInfoVo());
     }
 
+    private Rank calLotteryRank(Lottery lottery) {
+        List<Integer> correctNumbers = getCorrectNumbers(lottery);
+
+        int correctSize = correctNumbers.size();
+        if(correctSize == 6) {
+            Integer bonusNumber = getBonusNumber(lottery);
+
+            if(correctNumbers.contains(bonusNumber)) {
+                return Rank.SECOND;
+            } else {
+                return Rank.FIFTH;
+            }
+        } else if(correctSize == 5) {
+            return Rank.THIRD;
+        } else if(correctSize == 4) {
+            return Rank.FOURTH;
+        } else if(correctSize == 3) {
+            return Rank.FIFTH;
+        }
+        return Rank.NONE;
+    }
+
     private List<Integer> getCorrectNumbers(Lottery lottery) {
         List<Integer> lotteryNumbers = getLotteryNumbers(lottery);
         List<Integer> winningLotteryNumbers = getWinningLotteryNumbers(lottery);
