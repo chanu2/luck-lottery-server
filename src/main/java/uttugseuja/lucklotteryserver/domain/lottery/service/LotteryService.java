@@ -145,4 +145,8 @@ public class LotteryService {
             add(winningLottery.getBnusNo());
         }};
     }
+
+    private Integer getBonusNumber(Lottery lottery) {
+        return getWinningLottery(lottery.getRound()).getBnusNo();
+    }
 }
