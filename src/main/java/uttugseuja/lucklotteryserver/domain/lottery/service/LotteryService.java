@@ -65,4 +65,13 @@ public class LotteryService {
         return days / 7 + 1;
     }
 
+    private LocalDate getRecentWinningDate(int recentRound) {
+        WinningLotteryDto winningLottery = getWinningLottery(recentRound);
+        return convertStringToLocalDate(winningLottery.getDrwNoDate());
+    }
+
+    private LocalDate convertStringToLocalDate(String winningDate) {
+        return LocalDate.parse(winningDate);
+    }
+
 }
