@@ -11,6 +11,7 @@ import uttugseuja.lucklotteryserver.domain.lottery.exception.BadRoundException;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.LotteryResponse;
 import uttugseuja.lucklotteryserver.global.api.client.WinningLotteryClient;
 import uttugseuja.lucklotteryserver.global.api.dto.WinningLotteryDto;
+import uttugseuja.lucklotteryserver.global.common.Rank;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -105,4 +106,16 @@ public class LotteryService {
     private LotteryResponse getLotteryResponse(Lottery lottery) {
         return new LotteryResponse(lottery.getLotteryBaseInfoVo());
     }
+
+    private List<Integer> getLotteryNumbers(Lottery lottery) {
+        return new ArrayList<>(){{
+            add(lottery.getFirstNum());
+            add(lottery.getSecondNum());
+            add(lottery.getThirdNum());
+            add(lottery.getFourthNum());
+            add(lottery.getFifthNum());
+            add(lottery.getSixthNum());
+        }};
+    }
+
 }
