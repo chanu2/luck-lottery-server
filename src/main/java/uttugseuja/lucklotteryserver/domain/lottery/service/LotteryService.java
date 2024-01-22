@@ -56,4 +56,13 @@ public class LotteryService {
         return numbers;
     }
 
+    private int getRecentRound() {
+        LocalDateTime startDate = LocalDateTime.of(2002, 12, 7, 20, 0);
+        LocalDateTime now = LocalDateTime.now();
+
+        int days = (int) ChronoUnit.DAYS.between(startDate, now);
+
+        return days / 7 + 1;
+    }
+
 }
