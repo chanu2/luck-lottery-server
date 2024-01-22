@@ -25,7 +25,22 @@ import java.util.Random;
 public class LotteryService {
 
     private final WinningLotteryClient winningLotteryClient;
+    private final LotteryRepository lotteryRepository;
     private static final String method = "getLottoNumber";
+
+    public LotteryResponse createRandomLottery() {
+        List<Integer> randomNumbers = createRandomNumbers();
+
+        int recentRound = getRecentRound();
+
+        LocalDate winningDate = getRecentWinningDate(recentRound);
+
+        Lottery lottery = makeLottery(randomNumbers, recentRound + 1, winningDate.plusDays(7));
+
+        lotteryRepository.save(lottery);
+
+        return getLotteryResponse(lottery);
+    }
 
     public WinningLotteryDto getWinningLottery(Integer round) {
         String json = winningLotteryClient.getWinningLotteryInfo(method, round);
@@ -74,4 +89,20 @@ public class LotteryService {
         return LocalDate.parse(winningDate);
     }
 
+    private Lottery makeLottery(List<Integer> randomNumbers, int round, LocalDate winningDate) {
+        return Lottery.builder()
+                .round(round)
+                .winningDate(winningDate)
+                .firstNum(randomNumbers.get(0))
+                .secondNum(randomNumbers.get(1))
+                .thirdNum(randomNumbers.get(2))
+                .fourthNum(randomNumbers.get(3))
+                .fifthNum(randomNumbers.get(4))
+                .sixthNum(randomNumbers.get(5))
+                .build();
+    }
+
+    private LotteryResponse getLotteryResponse(Lottery lottery) {
+        return new LotteryResponse(lottery.getLotteryBaseInfoVo());
+    }
 }
