@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import uttugseuja.lucklotteryserver.domain.lottery.domain.Lottery;
 import uttugseuja.lucklotteryserver.domain.lottery.domain.repository.LotteryRepository;
 import uttugseuja.lucklotteryserver.domain.lottery.exception.BadRoundException;
+import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.request.CreateLotteryRequest;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.LotteryResponse;
+import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.RandomLotteryResponse;
 import uttugseuja.lucklotteryserver.global.api.client.WinningLotteryClient;
 import uttugseuja.lucklotteryserver.global.api.dto.WinningLotteryDto;
 import uttugseuja.lucklotteryserver.global.common.Rank;
@@ -29,21 +31,17 @@ public class LotteryService {
     private final LotteryRepository lotteryRepository;
     private static final String method = "getLottoNumber";
 
-    public LotteryResponse createRandomLottery() {
+    public RandomLotteryResponse createRandomLottery() {
         List<Integer> randomNumbers = createRandomNumbers();
 
         int recentRound = getRecentRound();
 
         LocalDate winningDate = getRecentWinningDate(recentRound);
 
-        Lottery lottery = makeLottery(randomNumbers, recentRound + 1, winningDate.plusDays(7));
-
-        lotteryRepository.save(lottery);
-
-        return getLotteryResponse(lottery);
+        return new RandomLotteryResponse(randomNumbers, recentRound + 1, winningDate.plusDays(7));
     }
 
-    public WinningLotteryDto getWinningLottery(Integer round) {
+    private WinningLotteryDto getWinningLottery(Integer round) {
         String json = winningLotteryClient.getWinningLotteryInfo(method, round);
         return deserialization(json);
     }
@@ -90,16 +88,16 @@ public class LotteryService {
         return LocalDate.parse(winningDate);
     }
 
-    private Lottery makeLottery(List<Integer> randomNumbers, int round, LocalDate winningDate) {
+    private Lottery makeLottery(CreateLotteryRequest createLotteryRequest) {
         return Lottery.builder()
-                .round(round)
-                .winningDate(winningDate)
-                .firstNum(randomNumbers.get(0))
-                .secondNum(randomNumbers.get(1))
-                .thirdNum(randomNumbers.get(2))
-                .fourthNum(randomNumbers.get(3))
-                .fifthNum(randomNumbers.get(4))
-                .sixthNum(randomNumbers.get(5))
+                .round(createLotteryRequest.getRound())
+                .winningDate(createLotteryRequest.getWinningDate())
+                .firstNum(createLotteryRequest.getFirstNum())
+                .secondNum(createLotteryRequest.getSecondNum())
+                .thirdNum(createLotteryRequest.getThirdNum())
+                .fourthNum(createLotteryRequest.getFourthNum())
+                .fifthNum(createLotteryRequest.getFifthNum())
+                .sixthNum(createLotteryRequest.getSixthNum())
                 .build();
     }
 
