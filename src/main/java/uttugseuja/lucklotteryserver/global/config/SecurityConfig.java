@@ -12,7 +12,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import uttugseuja.lucklotteryserver.global.security.JwtTokenFilter;
 import uttugseuja.lucklotteryserver.global.security.JwtTokenProvider;
-import uttugseuja.lucklotteryserver.global.security.filter.CustomAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
@@ -26,9 +25,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
         http
-                .exceptionHandling((handling) ->
-                        handling.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                )
+//                .exceptionHandling((handling) ->
+//                        handling.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+//                )
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session
