@@ -18,10 +18,28 @@ public class ExceptionFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+    protected void doFilterInternal(
+            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws IOException {
+        try {
+            filterChain.doFilter(request, response);
+        } catch (LuckLotteryException e) {
+            writeErrorResponse(response, e.getErrorCode(), request.getRequestURL().toString());
+        } catch (Exception e) {
+            if (e.getCause() instanceof LuckLotteryException) {
+                writeErrorResponse(
+                        response,
+                        ((LuckLotteryException) e.getCause()).getErrorCode(),
+                        request.getRequestURL().toString());
+            } else {
+                e.printStackTrace();
+                writeErrorResponse(
+                        response,
+                        ErrorCode.INTERNAL_SERVER_ERROR,
+                        request.getRequestURL().toString());
+            }
+        }
     }
-
 
 
     private void writeErrorResponse(HttpServletResponse response, ErrorCode errorCode, String path)
