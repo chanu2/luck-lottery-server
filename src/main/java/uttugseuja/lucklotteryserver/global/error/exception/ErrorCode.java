@@ -13,7 +13,10 @@ public enum ErrorCode {
 
     /* 404 NOT_FOUND : Resource를 찾을 수 없음 */
     LOTTERY_ROUND_NOT_FOUND(404, "해당 회차의 로또 정보를 찾을 수 없습니다."),
-    USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다.")
+    USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
+
+    /* 500 */
+    INTERNAL_SERVER_ERROR(500,"서버 에러")
     ;
 
     private int status;
