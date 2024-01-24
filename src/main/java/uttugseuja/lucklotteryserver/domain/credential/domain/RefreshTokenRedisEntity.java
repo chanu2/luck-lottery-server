@@ -10,11 +10,14 @@ import org.springframework.data.redis.core.index.Indexed;
 @RedisHash(value = "refreshToken")
 @Getter
 public class RefreshTokenRedisEntity {
+
     @Id
     private String id;
+
     @Indexed
     private String refreshToken;
-    @TimeToLive // TTL
+
+    @TimeToLive
     private Long refreshTokenTtl;
 
     @Builder
