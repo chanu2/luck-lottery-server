@@ -17,4 +17,9 @@ public class LotteryController {
     public RandomLotteryResponse createRandomLottery() {
         return lotteryService.createRandomLottery();
     }
+
+    @PostMapping("/save")
+    public void saveLottery(@RequestBody CreateLotteryRequest createLotteryRequest) {
+        lotteryService.saveLottery(createLotteryRequest);
+    }
 }
