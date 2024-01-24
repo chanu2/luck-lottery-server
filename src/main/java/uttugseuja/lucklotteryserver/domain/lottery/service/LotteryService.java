@@ -41,6 +41,12 @@ public class LotteryService {
         return new RandomLotteryResponse(randomNumbers, recentRound + 1, winningDate.plusDays(7));
     }
 
+    public void saveLottery(CreateLotteryRequest createLotteryRequest) {
+        Lottery lottery = makeLottery(createLotteryRequest);
+
+        lotteryRepository.save(lottery);
+    }
+
     private WinningLotteryDto getWinningLottery(Integer round) {
         String json = winningLotteryClient.getWinningLotteryInfo(method, round);
         return deserialization(json);
