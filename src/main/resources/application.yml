@@ -6,7 +6,10 @@ spring:
     url: jdbc:mariadb://localhost:3306/luckLottery
     username: root
     password: 1234
-
+  data:
+    redis:
+      host: localhost
+      port: 6379
   jpa:
     open-in-view: false
     hibernate:
