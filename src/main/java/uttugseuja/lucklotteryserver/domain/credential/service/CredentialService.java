@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uttugseuja.lucklotteryserver.domain.credential.domain.RefreshTokenRedisEntity;
 import uttugseuja.lucklotteryserver.domain.credential.domain.repository.RefreshTokenRedisEntityRepository;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AuthTokensResponse;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.CheckRegisteredResponse;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.domain.user.domain.repository.UserRepository;
+import uttugseuja.lucklotteryserver.global.exception.UserNotFoundException;
 import uttugseuja.lucklotteryserver.global.security.JwtTokenProvider;
 
 
@@ -41,6 +43,27 @@ public class CredentialService {
                 userRepository.findByOauthIdAndOauthProvider(
                         oidcDecodePayload.getSub(), oauthProvider.getValue());
         return user.isEmpty();
+    }
+
+    public AuthTokensResponse loginUserByOCIDToken(String token, OauthProvider oauthProvider) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        OauthStrategy oauthStrategy = oauthFactory.getOauthstrategy(oauthProvider);
+        OIDCDecodePayload oidcDecodePayload = oauthStrategy.getOIDCDecodePayload(token);
+
+        User user =
+                userRepository
+                        .findByOauthIdAndOauthProvider(
+                                oidcDecodePayload.getSub(), oauthProvider.getValue())
+                        .orElseThrow(() -> UserNotFoundException.EXCEPTION);
+
+        String accessToken =
+                jwtTokenProvider.generateAccessToken(user.getId(), user.getAccountRole());
+
+        String refreshToken = generateRefreshToken(user.getId());
+
+        return AuthTokensResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     private String generateRefreshToken(Long userId) {
