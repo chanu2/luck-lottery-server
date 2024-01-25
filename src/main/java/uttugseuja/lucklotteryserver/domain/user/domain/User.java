@@ -18,11 +18,11 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
+    private String nickName;
+
     private String oauthProvider;
 
     private String oauthId;
-
-    private String nickName;
 
     private String email;
 
@@ -31,7 +31,20 @@ public class User {
     @Enumerated(EnumType.STRING)
     private AccountRole accountRole = AccountRole.USER;
 
-
-
-
+    @Builder
+    public User(
+            Long id,
+            String nickname,
+            String oauthProvider,
+            String oauthId,
+            String email,
+            String profilePath) {
+        this.id = id;
+        this.nickName = nickname;
+        this.oauthProvider = oauthProvider;
+        this.oauthId = oauthId;
+        this.email = email;
+        this.profilePath = profilePath;
+    }
+    
 }
