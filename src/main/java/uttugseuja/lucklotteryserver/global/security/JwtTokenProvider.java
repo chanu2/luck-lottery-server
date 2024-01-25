@@ -4,10 +4,12 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import uttugseuja.lucklotteryserver.domain.credential.exception.RefreshTokenExpiredException;
 import uttugseuja.lucklotteryserver.domain.user.domain.AccountRole;
 import uttugseuja.lucklotteryserver.global.exception.ExpiredTokenException;
 import uttugseuja.lucklotteryserver.global.exception.InvalidTokenException;
@@ -20,6 +22,7 @@ import java.util.Date;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class JwtTokenProvider {
 
     private final JwtProperties jwtProperties;
@@ -62,12 +65,33 @@ public class JwtTokenProvider {
                 userDetails, "", userDetails.getAuthorities());
     }
 
+    public Long getRefreshTokenTTlSecond() {
+        return jwtProperties.getRefreshExp();
+    }
+
+    public boolean isRefreshToken(String token) {
+        return getJws(token).getBody().get(TYPE).equals(REFRESH_TOKEN);
+    }
+
+    public Long parseRefreshToken(String token) {
+        try {
+            if (isRefreshToken(token)) {
+                Claims claims = getJws(token).getBody();
+                return Long.parseLong(claims.getSubject());
+            }
+        } catch (ExpiredTokenException e) {
+            throw RefreshTokenExpiredException.EXCEPTION;
+        }
+        throw InvalidTokenException.EXCEPTION;
+    }
+
     private Jws<Claims> getJws(String token) {
         try {
             return Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token);
         } catch (ExpiredJwtException e) {
             throw ExpiredTokenException.EXCEPTION;
         } catch (Exception e) {
+            log.info("현재 토큰 : {}",token);
             throw InvalidTokenException.EXCEPTION;
         }
     }
@@ -101,6 +125,8 @@ public class JwtTokenProvider {
     private Key getSecretKey() {
         return Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8));
     }
+
+
 
 
 }
