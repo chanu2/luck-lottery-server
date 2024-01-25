@@ -18,7 +18,7 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    private String nickName;
+    private String nickname;
 
     private String oauthProvider;
 
@@ -40,7 +40,7 @@ public class User {
             String email,
             String profilePath) {
         this.id = id;
-        this.nickName = nickname;
+        this.nickname = nickname;
         this.oauthProvider = oauthProvider;
         this.oauthId = oauthId;
         this.email = email;
