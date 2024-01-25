@@ -7,8 +7,7 @@ import uttugseuja.lucklotteryserver.global.api.client.KakaoOauthClient;
 import uttugseuja.lucklotteryserver.global.api.dto.OIDCKeysResponse;
 import uttugseuja.lucklotteryserver.global.property.OauthProperties;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+
 
 
 @AllArgsConstructor
@@ -40,6 +39,11 @@ public class KaKaoOauthStrategy implements OauthStrategy {
 
     @Override
     public String getIdToken(String code) {
-        return null;
+        return kakaoOauthClient
+                .kakaoAuth(
+                        oauthProperties.getKakaoClientId(),
+                        oauthProperties.getKakaoRedirectUrl(),
+                        code)
+                .getIdToken();
     }
 }
