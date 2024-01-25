@@ -64,6 +64,11 @@ public class CredentialService {
         return new CheckRegisteredResponse(isRegistered);
     }
 
+    public String getOauthLink(OauthProvider oauthProvider) {
+        OauthStrategy oauthStrategy = oauthFactory.getOauthstrategy(oauthProvider);
+        return oauthStrategy.getOauthLink();
+    }
+
     private Boolean checkUserCanRegister(
             OIDCDecodePayload oidcDecodePayload, OauthProvider oauthProvider) {
         Optional<User> user =

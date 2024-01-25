@@ -9,13 +9,12 @@ import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.T
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AccessTokenDto;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AuthTokensResponse;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.CheckRegisteredResponse;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.OauthLoginLinkResponse;
 import uttugseuja.lucklotteryserver.domain.credential.service.CredentialService;
 import uttugseuja.lucklotteryserver.domain.credential.service.OauthProvider;
-import uttugseuja.lucklotteryserver.domain.user.domain.User;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/v1/credentials")
@@ -36,6 +35,10 @@ public class CredentialController {
         credentialService.singUpTest(registerRequest);
     }
 
+    @GetMapping("/oauth/link/kakao")
+    public OauthLoginLinkResponse getKakaoOauthLink() {
+        return new OauthLoginLinkResponse(credentialService.getOauthLink(OauthProvider.KAKAO));
+    }
 
     @GetMapping("/oauth/valid/register")
     public CheckRegisteredResponse valid(
