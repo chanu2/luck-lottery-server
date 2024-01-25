@@ -11,9 +11,11 @@ import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.CheckRegisteredResponse;
 import uttugseuja.lucklotteryserver.domain.credential.service.CredentialService;
 import uttugseuja.lucklotteryserver.domain.credential.service.OauthProvider;
+import uttugseuja.lucklotteryserver.domain.user.domain.User;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/credentials")
@@ -24,10 +26,16 @@ public class CredentialController {
     private final CredentialService credentialService;
 
     @PostMapping("/login2/{userId}")
-    public AccessTokenDto login(@PathVariable("userId") Long userId){
+    public AccessTokenDto loginTest(@PathVariable("userId") Long userId){
         AccessTokenDto result = credentialService.login(userId);
         return result;
     }
+
+    @PostMapping("/singup2")
+    public void signUptTest(@RequestBody RegisterRequest registerRequest){
+        credentialService.singUpTest(registerRequest);
+    }
+
 
     @GetMapping("/oauth/valid/register")
     public CheckRegisteredResponse valid(

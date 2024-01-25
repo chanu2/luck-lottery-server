@@ -22,6 +22,7 @@ import uttugseuja.lucklotteryserver.global.utils.user.UserUtils;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -41,6 +42,19 @@ public class CredentialService {
         User user = userUtils.getUserById(userId);
         String accessToken = jwtTokenProvider.generateAccessToken(userId, user.getAccountRole());
         return new AccessTokenDto(accessToken);
+    }
+
+    @Transactional
+    public void singUpTest(RegisterRequest registerRequest){
+        User user =
+                User.builder()
+                        .oauthProvider(UUID.randomUUID().toString())
+                        .oauthId(UUID.randomUUID().toString())
+                        .email(null)
+                        .profilePath(null)
+                        .nickname(registerRequest.getNickname())
+                        .build();
+        userRepository.save(user);
     }
 
     public CheckRegisteredResponse getUserAvailableRegister(String token, OauthProvider oauthProvider) throws NoSuchAlgorithmException, InvalidKeySpecException {
