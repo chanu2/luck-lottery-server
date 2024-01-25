@@ -3,6 +3,7 @@ package uttugseuja.lucklotteryserver.domain.credential.presentation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AuthTokensResponse;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.CheckRegisteredResponse;
 import uttugseuja.lucklotteryserver.domain.credential.service.CredentialService;
 import uttugseuja.lucklotteryserver.domain.credential.service.OauthProvider;
@@ -25,6 +26,13 @@ public class CredentialController {
             @RequestParam("provider") OauthProvider oauthProvider) throws NoSuchAlgorithmException, InvalidKeySpecException {
         log.info("controller token = {}",token);
         return credentialService.getUserAvailableRegister(token, oauthProvider);
+    }
+
+    @PostMapping("/login")
+    public AuthTokensResponse loginUser(
+            @RequestParam("idToken") String token,
+            @RequestParam("provider") OauthProvider oauthProvider) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return credentialService.loginUserByOCIDToken(token, oauthProvider);
     }
 
 }
