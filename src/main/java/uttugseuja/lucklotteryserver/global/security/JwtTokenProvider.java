@@ -66,6 +66,10 @@ public class JwtTokenProvider {
         return jwtProperties.getRefreshExp();
     }
 
+    public boolean isRefreshToken(String token) {
+        return getJws(token).getBody().get(TYPE).equals(REFRESH_TOKEN);
+    }
+
     private Jws<Claims> getJws(String token) {
         try {
             return Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token);
