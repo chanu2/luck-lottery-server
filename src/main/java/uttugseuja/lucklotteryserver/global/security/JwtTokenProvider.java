@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import uttugseuja.lucklotteryserver.domain.credential.exception.RefreshTokenExpiredException;
 import uttugseuja.lucklotteryserver.domain.user.domain.AccountRole;
 import uttugseuja.lucklotteryserver.global.exception.ExpiredTokenException;
 import uttugseuja.lucklotteryserver.global.exception.InvalidTokenException;
@@ -68,6 +69,18 @@ public class JwtTokenProvider {
 
     public boolean isRefreshToken(String token) {
         return getJws(token).getBody().get(TYPE).equals(REFRESH_TOKEN);
+    }
+
+    public Long parseRefreshToken(String token) {
+        try {
+            if (isRefreshToken(token)) {
+                Claims claims = getJws(token).getBody();
+                return Long.parseLong(claims.getSubject());
+            }
+        } catch (ExpiredTokenException e) {
+            throw RefreshTokenExpiredException.EXCEPTION;
+        }
+        throw InvalidTokenException.EXCEPTION;
     }
 
     private Jws<Claims> getJws(String token) {
