@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.RegisterRequest;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.TokenRefreshRequest;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AccessTokenDto;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AuthTokensResponse;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.CheckRegisteredResponse;
 import uttugseuja.lucklotteryserver.domain.credential.service.CredentialService;
@@ -22,6 +23,11 @@ public class CredentialController {
 
     private final CredentialService credentialService;
 
+    @PostMapping("/login2/{userId}")
+    public AccessTokenDto login(@PathVariable("userId") Long userId){
+        AccessTokenDto result = credentialService.login(userId);
+        return result;
+    }
 
     @GetMapping("/oauth/valid/register")
     public CheckRegisteredResponse valid(

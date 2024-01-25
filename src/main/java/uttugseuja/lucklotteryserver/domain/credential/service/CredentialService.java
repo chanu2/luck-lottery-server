@@ -8,6 +8,7 @@ import uttugseuja.lucklotteryserver.domain.credential.domain.RefreshTokenRedisEn
 import uttugseuja.lucklotteryserver.domain.credential.domain.repository.RefreshTokenRedisEntityRepository;
 import uttugseuja.lucklotteryserver.domain.credential.exception.RefreshTokenExpiredException;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.RegisterRequest;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AccessTokenDto;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AuthTokensResponse;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.CheckRegisteredResponse;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
@@ -34,6 +35,13 @@ public class CredentialService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRedisEntityRepository refreshTokenRedisEntityRepository;
     private final UserUtils userUtils;
+
+    @Transactional
+    public AccessTokenDto login(Long userId){
+        User user = userUtils.getUserById(userId);
+        String accessToken = jwtTokenProvider.generateAccessToken(userId, user.getAccountRole());
+        return new AccessTokenDto(accessToken);
+    }
 
     public CheckRegisteredResponse getUserAvailableRegister(String token, OauthProvider oauthProvider) throws NoSuchAlgorithmException, InvalidKeySpecException {
         OauthStrategy oauthstrategy = oauthFactory.getOauthstrategy(oauthProvider);
