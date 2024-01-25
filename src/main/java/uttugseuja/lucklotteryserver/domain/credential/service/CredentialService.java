@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uttugseuja.lucklotteryserver.domain.credential.domain.RefreshTokenRedisEntity;
 import uttugseuja.lucklotteryserver.domain.credential.domain.repository.RefreshTokenRedisEntityRepository;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.RegisterRequest;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AuthTokensResponse;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.CheckRegisteredResponse;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
@@ -58,6 +59,32 @@ public class CredentialService {
         String accessToken =
                 jwtTokenProvider.generateAccessToken(user.getId(), user.getAccountRole());
 
+        String refreshToken = generateRefreshToken(user.getId());
+
+        return AuthTokensResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    @Transactional
+    public AuthTokensResponse registerUserByOCIDToken(
+            String token, RegisterRequest registerUserRequest, OauthProvider oauthProvider) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        OauthStrategy oauthStrategy = oauthFactory.getOauthstrategy(oauthProvider);
+        OIDCDecodePayload oidcDecodePayload = oauthStrategy.getOIDCDecodePayload(token);
+
+        User user =
+                User.builder()
+                        .oauthProvider(oauthProvider.getValue())
+                        .oauthId(oidcDecodePayload.getSub())
+                        .email(oidcDecodePayload.getEmail())
+                        .profilePath(oidcDecodePayload.getProfile())
+                        .nickname(registerUserRequest.getNickname())
+                        .build();
+        userRepository.save(user);
+
+        String accessToken =
+                jwtTokenProvider.generateAccessToken(user.getId(), user.getAccountRole());
         String refreshToken = generateRefreshToken(user.getId());
 
         return AuthTokensResponse.builder()
