@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests((registry) ->
-                        registry.requestMatchers("/api/hello").permitAll()
+                        registry.requestMatchers("/**").permitAll()
                                 .requestMatchers("/api/authentication").permitAll()
                                 .requestMatchers("/api/signup").permitAll()
                                 .anyRequest().authenticated()
