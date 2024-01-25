@@ -13,8 +13,4 @@ public class RegisterRequest {
     @Size(max = 10)
     private String nickname;
 
-    private String email;
-
-    private String profilePath;
-
 }
