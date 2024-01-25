@@ -62,6 +62,10 @@ public class JwtTokenProvider {
                 userDetails, "", userDetails.getAuthorities());
     }
 
+    public Long getRefreshTokenTTlSecond() {
+        return jwtProperties.getRefreshExp();
+    }
+
     private Jws<Claims> getJws(String token) {
         try {
             return Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token);
@@ -101,6 +105,8 @@ public class JwtTokenProvider {
     private Key getSecretKey() {
         return Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8));
     }
+
+
 
 
 }
