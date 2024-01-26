@@ -11,9 +11,11 @@ import uttugseuja.lucklotteryserver.domain.lottery.exception.BadRoundException;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.request.CreateLotteryRequest;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.LotteryResponse;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.RandomLotteryResponse;
+import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.global.api.client.WinningLotteryClient;
 import uttugseuja.lucklotteryserver.global.api.dto.WinningLotteryDto;
 import uttugseuja.lucklotteryserver.global.common.Rank;
+import uttugseuja.lucklotteryserver.global.utils.user.UserUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,6 +32,7 @@ public class LotteryService {
     private final WinningLotteryClient winningLotteryClient;
     private final LotteryRepository lotteryRepository;
     private static final String method = "getLottoNumber";
+    private final UserUtils userUtils;
 
     public RandomLotteryResponse createRandomLottery() {
         List<Integer> randomNumbers = createRandomNumbers();
@@ -42,7 +45,9 @@ public class LotteryService {
     }
 
     public void saveLottery(CreateLotteryRequest createLotteryRequest) {
-        Lottery lottery = makeLottery(createLotteryRequest);
+        User user = userUtils.getUserFromSecurityContext();
+
+        Lottery lottery = makeLottery(createLotteryRequest, user);
 
         lotteryRepository.save(lottery);
     }
@@ -94,8 +99,9 @@ public class LotteryService {
         return LocalDate.parse(winningDate);
     }
 
-    private Lottery makeLottery(CreateLotteryRequest createLotteryRequest) {
+    private Lottery makeLottery(CreateLotteryRequest createLotteryRequest, User user) {
         return Lottery.builder()
+                .user(user)
                 .round(createLotteryRequest.getRound())
                 .winningDate(createLotteryRequest.getWinningDate())
                 .firstNum(createLotteryRequest.getFirstNum())
