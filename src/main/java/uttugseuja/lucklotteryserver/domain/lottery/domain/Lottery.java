@@ -41,7 +41,8 @@ public class Lottery {
     private Integer sixthNum;
 
     @Builder
-    public Lottery(Integer round,
+    public Lottery(User user,
+                   Integer round,
                    LocalDate winningDate,
                    Integer firstNum,
                    Integer secondNum,
@@ -49,6 +50,7 @@ public class Lottery {
                    Integer fourthNum,
                    Integer fifthNum,
                    Integer sixthNum) {
+        this.user = user;
         this.round = round;
         this.winningDate = winningDate;
         this.firstNum = firstNum;
