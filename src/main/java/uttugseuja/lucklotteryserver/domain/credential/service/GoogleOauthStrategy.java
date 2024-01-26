@@ -22,5 +22,15 @@ public class GoogleOauthStrategy implements OauthStrategy{
         return oauthOIDCProvider.getPayloadFromIdToken(token,ISSUER,oauthProperties.getKakaoAppId(),oidcKakaoKeysResponse);
     }
 
+    @Override
+    public String getOauthLink() {
+        return null;
+    }
+
+    @Override
+    public String getIdToken(String code) {
+        return null;
+    }
+
 
 }

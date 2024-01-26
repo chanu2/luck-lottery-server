@@ -4,18 +4,15 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.OauthCodeRequest;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.RegisterRequest;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.TokenRefreshRequest;
-import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AccessTokenDto;
-import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AuthTokensResponse;
-import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.CheckRegisteredResponse;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.*;
 import uttugseuja.lucklotteryserver.domain.credential.service.CredentialService;
 import uttugseuja.lucklotteryserver.domain.credential.service.OauthProvider;
-import uttugseuja.lucklotteryserver.domain.user.domain.User;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/v1/credentials")
@@ -36,6 +33,16 @@ public class CredentialController {
         credentialService.singUpTest(registerRequest);
     }
 
+    @GetMapping("/oauth/link/kakao")
+    public OauthLoginLinkResponse getKakaoOauthLink() {
+        return new OauthLoginLinkResponse(credentialService.getOauthLink(OauthProvider.KAKAO));
+    }
+
+    @GetMapping("/oauth/kakao")
+    public AfterOauthResponse kakaoAuth(OauthCodeRequest oauthCodeRequest) {
+        log.info("code = {}",oauthCodeRequest.getCode());
+        return credentialService.getIdTokenToCode(OauthProvider.KAKAO, oauthCodeRequest.getCode());
+    }
 
     @GetMapping("/oauth/valid/register")
     public CheckRegisteredResponse valid(

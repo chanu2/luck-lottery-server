@@ -9,6 +9,7 @@ import uttugseuja.lucklotteryserver.domain.credential.domain.repository.RefreshT
 import uttugseuja.lucklotteryserver.domain.credential.exception.RefreshTokenExpiredException;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.RegisterRequest;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AccessTokenDto;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AfterOauthResponse;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AuthTokensResponse;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.CheckRegisteredResponse;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
@@ -57,11 +58,25 @@ public class CredentialService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public AfterOauthResponse getIdTokenToCode(OauthProvider oauthProvider, String code) {
+        OauthStrategy oauthStrategy = oauthFactory.getOauthstrategy(oauthProvider);
+        log.info("oauthStrategy ={}" ,oauthStrategy);
+        String idToken = oauthStrategy.getIdToken(code);
+        log.info("idToken ={}" ,idToken);
+        return new AfterOauthResponse(idToken);
+    }
+
     public CheckRegisteredResponse getUserAvailableRegister(String token, OauthProvider oauthProvider) throws NoSuchAlgorithmException, InvalidKeySpecException {
         OauthStrategy oauthstrategy = oauthFactory.getOauthstrategy(oauthProvider);
         OIDCDecodePayload oidcDecodePayload = oauthstrategy.getOIDCDecodePayload(token);
         Boolean isRegistered = !checkUserCanRegister(oidcDecodePayload, oauthProvider);
         return new CheckRegisteredResponse(isRegistered);
+    }
+
+    public String getOauthLink(OauthProvider oauthProvider) {
+        OauthStrategy oauthStrategy = oauthFactory.getOauthstrategy(oauthProvider);
+        return oauthStrategy.getOauthLink();
     }
 
     private Boolean checkUserCanRegister(

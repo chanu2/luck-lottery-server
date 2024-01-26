@@ -24,6 +24,9 @@ logging.level:
 oauth:
   kakao:
     app-id: ${KAKAO_APP_ID}
+    client-id: ${CLIENT_ID}
+    redirect-url: ${REDIRECT_URL}
+    base-url: ${BASE_URL}
   google:
     app-id: ${GOOGLE_APP_ID}
 
