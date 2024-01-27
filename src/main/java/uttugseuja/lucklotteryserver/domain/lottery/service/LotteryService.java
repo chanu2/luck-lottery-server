@@ -126,14 +126,10 @@ public class LotteryService {
         return false;
     }
 
-    private Rank calLotteryRank(Lottery lottery) {
-        List<Integer> correctNumbers = getCorrectNumbers(lottery);
-
+    private Rank calLotteryRank(List<Integer> correctNumbers, Integer bonusNumber) {
         int correctSize = correctNumbers.size();
         if(correctSize == 6) {
-            Integer bonusNumber = getBonusNumber(lottery);
-
-            if(correctNumbers.contains(bonusNumber)) {
+            if(checkBonusNumber(correctNumbers, bonusNumber)) {
                 return Rank.SECOND;
             } else {
                 return Rank.FIFTH;
