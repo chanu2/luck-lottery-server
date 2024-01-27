@@ -183,7 +183,10 @@ public class LotteryService {
         }};
     }
 
-    private Integer getBonusNumber(Lottery lottery) {
-        return getWinningLottery(lottery.getRound()).getBnusNo();
+    private boolean checkBonusNumber(List<Integer> correctNumbers, Integer bonusNumber) {
+        if(correctNumbers.contains(bonusNumber)) {
+            return true;
+        }
+        return false;
     }
 }
