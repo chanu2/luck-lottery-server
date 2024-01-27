@@ -6,11 +6,7 @@ import uttugseuja.lucklotteryserver.domain.lottery.domain.vo.LotteryBaseInfoVo;
 import java.time.LocalDate;
 
 @Getter
-public class LotteryResponse {
-
-    private Integer round;
-
-    private LocalDate winningDate;
+public class LotteryNumbersResponse {
 
     private Integer firstNum;
 
@@ -24,9 +20,7 @@ public class LotteryResponse {
 
     private Integer sixthNum;
 
-    public LotteryResponse(LotteryBaseInfoVo lotteryBaseInfoVo) {
-        round = lotteryBaseInfoVo.getRound();
-        winningDate = lotteryBaseInfoVo.getWinningDate();
+    public LotteryNumbersResponse(LotteryBaseInfoVo lotteryBaseInfoVo) {
         firstNum = lotteryBaseInfoVo.getFirstNum();
         secondNum = lotteryBaseInfoVo.getSecondNum();
         thirdNum = lotteryBaseInfoVo.getThirdNum();
