@@ -10,7 +10,9 @@ import uttugseuja.lucklotteryserver.domain.lottery.domain.repository.LotteryRepo
 import uttugseuja.lucklotteryserver.domain.lottery.exception.BadRoundException;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.request.CreateLotteryRequest;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.LotteryResponse;
+import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.LotteryNumbersResponse;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.RandomLotteryResponse;
+import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.WinningLotteryNumbersResponse;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.global.api.client.WinningLotteryClient;
 import uttugseuja.lucklotteryserver.global.api.dto.WinningLotteryDto;
@@ -50,6 +52,41 @@ public class LotteryService {
         Lottery lottery = makeLottery(createLotteryRequest, user);
 
         lotteryRepository.save(lottery);
+    }
+
+    public List<LotteryResponse> getLotteriesByUser() {
+        User user = userUtils.getUserFromSecurityContext();
+        List<Lottery> lotteries = lotteryRepository.findByUser(user);
+        List<LotteryResponse> lotteryResponseList = new ArrayList<>();
+
+        for(Lottery lottery : lotteries) {
+            LotteryResponse lotteryResponse = processLottery(lottery);
+            lotteryResponseList.add(lotteryResponse);
+        }
+
+        return lotteryResponseList;
+    }
+
+    private LotteryResponse processLottery(Lottery lottery) {
+        Integer lotteryRound = lottery.getRound();
+        int recentRound = getRecentRound();
+
+        if(lotteryRound <= recentRound) {
+            WinningLotteryDto winningLottery = getWinningLottery(lotteryRound);
+            List<Integer> lotteryNumbers = getLotteryNumbers(lottery);
+            List<Integer> winningLotteryNumbers = getWinningLotteryNumbers(winningLottery);
+            List<Integer> correctNumbers = getCorrectNumbers(lotteryNumbers, winningLotteryNumbers);
+
+            if(lottery.getRank() == null) {
+                boolean hasBonusNumber = checkBonusNumber(correctNumbers, winningLottery.getBnusNo());
+                Rank rank = calLotteryRank(correctNumbers, hasBonusNumber);
+                lottery.updateRank(rank);
+            }
+
+            return getLotteryResponse(lottery, winningLottery, correctNumbers);
+        } else {
+            return getLotteryResponse(lottery, null, null);
+        }
     }
 
     private WinningLotteryDto getWinningLottery(Integer round) {
@@ -113,8 +150,19 @@ public class LotteryService {
                 .build();
     }
 
-    private LotteryResponse getLotteryResponse(Lottery lottery) {
-        return new LotteryResponse(lottery.getLotteryBaseInfoVo());
+    private LotteryResponse getLotteryResponse(Lottery lottery,
+                                               WinningLotteryDto winningLotteryDto,
+                                               List<Integer> correctNumbers) {
+        LotteryNumbersResponse lotteryNumbersResponse = new LotteryNumbersResponse(lottery.getLotteryBaseInfoVo());
+        WinningLotteryNumbersResponse winningLotteryNumbersResponse;
+        if(winningLotteryDto == null) {
+            winningLotteryNumbersResponse = null;
+            correctNumbers = null;
+        } else {
+            winningLotteryNumbersResponse = new WinningLotteryNumbersResponse(winningLotteryDto);
+        }
+        return new LotteryResponse(lotteryNumbersResponse, winningLotteryNumbersResponse,
+                correctNumbers, lottery.getLotteryBaseInfoVo());
     }
 
     private Rank calLotteryRank(List<Integer> correctNumbers, boolean hasBonusNumber) {
@@ -123,7 +171,7 @@ public class LotteryService {
             if(hasBonusNumber) {
                 return Rank.SECOND;
             } else {
-                return Rank.FIFTH;
+                return Rank.FIRST;
             }
         } else if(correctSize == 5) {
             return Rank.THIRD;
