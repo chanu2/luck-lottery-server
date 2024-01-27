@@ -148,9 +148,7 @@ public class LotteryService {
         return Rank.NONE;
     }
 
-    private List<Integer> getCorrectNumbers(Lottery lottery) {
-        List<Integer> lotteryNumbers = getLotteryNumbers(lottery);
-        List<Integer> winningLotteryNumbers = getWinningLotteryNumbers(lottery);
+    private List<Integer> getCorrectNumbers(List<Integer> lotteryNumbers, List<Integer> winningLotteryNumbers) {
         List<Integer> correctNumbers = new ArrayList<>();
 
         for(Integer number : lotteryNumbers) {
