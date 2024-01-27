@@ -117,23 +117,10 @@ public class LotteryService {
         return new LotteryResponse(lottery.getLotteryBaseInfoVo());
     }
 
-    private Boolean checkBeforeRecentRound(Lottery lottery) {
-        int recentRound = getRecentRound();
-
-        if(recentRound >= lottery.getRound()) {
-            return true;
-        }
-        return false;
-    }
-
-    private Rank calLotteryRank(Lottery lottery) {
-        List<Integer> correctNumbers = getCorrectNumbers(lottery);
-
+    private Rank calLotteryRank(List<Integer> correctNumbers, boolean hasBonusNumber) {
         int correctSize = correctNumbers.size();
         if(correctSize == 6) {
-            Integer bonusNumber = getBonusNumber(lottery);
-
-            if(correctNumbers.contains(bonusNumber)) {
+            if(hasBonusNumber) {
                 return Rank.SECOND;
             } else {
                 return Rank.FIFTH;
@@ -148,9 +135,7 @@ public class LotteryService {
         return Rank.NONE;
     }
 
-    private List<Integer> getCorrectNumbers(Lottery lottery) {
-        List<Integer> lotteryNumbers = getLotteryNumbers(lottery);
-        List<Integer> winningLotteryNumbers = getWinningLotteryNumbers(lottery);
+    private List<Integer> getCorrectNumbers(List<Integer> lotteryNumbers, List<Integer> winningLotteryNumbers) {
         List<Integer> correctNumbers = new ArrayList<>();
 
         for(Integer number : lotteryNumbers) {
@@ -173,9 +158,7 @@ public class LotteryService {
         }};
     }
 
-    private List<Integer> getWinningLotteryNumbers(Lottery lottery) {
-        WinningLotteryDto winningLottery = getWinningLottery(lottery.getRound());
-
+    private List<Integer> getWinningLotteryNumbers(WinningLotteryDto winningLottery) {
         return new ArrayList<>(){{
             add(winningLottery.getDrwtNo1());
             add(winningLottery.getDrwtNo2());
@@ -187,7 +170,10 @@ public class LotteryService {
         }};
     }
 
-    private Integer getBonusNumber(Lottery lottery) {
-        return getWinningLottery(lottery.getRound()).getBnusNo();
+    private boolean checkBonusNumber(List<Integer> correctNumbers, Integer bonusNumber) {
+        if(correctNumbers.contains(bonusNumber)) {
+            return true;
+        }
+        return false;
     }
 }
