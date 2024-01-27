@@ -2,6 +2,7 @@ package uttugseuja.lucklotteryserver.domain.lottery.domain.vo;
 
 import lombok.Builder;
 import lombok.Getter;
+import uttugseuja.lucklotteryserver.global.common.Rank;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,6 +28,8 @@ public class LotteryBaseInfoVo {
     private final Integer fifthNum;
 
     private final Integer sixthNum;
+
+    private final Rank rank;
 
     private LocalDateTime createdDate;
 
