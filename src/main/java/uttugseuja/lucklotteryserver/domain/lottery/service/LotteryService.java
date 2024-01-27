@@ -173,9 +173,7 @@ public class LotteryService {
         }};
     }
 
-    private List<Integer> getWinningLotteryNumbers(Lottery lottery) {
-        WinningLotteryDto winningLottery = getWinningLottery(lottery.getRound());
-
+    private List<Integer> getWinningLotteryNumbers(WinningLotteryDto winningLottery) {
         return new ArrayList<>(){{
             add(winningLottery.getDrwtNo1());
             add(winningLottery.getDrwtNo2());
