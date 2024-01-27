@@ -117,10 +117,10 @@ public class LotteryService {
         return new LotteryResponse(lottery.getLotteryBaseInfoVo());
     }
 
-    private Rank calLotteryRank(List<Integer> correctNumbers, Integer bonusNumber) {
+    private Rank calLotteryRank(List<Integer> correctNumbers, boolean hasBonusNumber) {
         int correctSize = correctNumbers.size();
         if(correctSize == 6) {
-            if(checkBonusNumber(correctNumbers, bonusNumber)) {
+            if(hasBonusNumber) {
                 return Rank.SECOND;
             } else {
                 return Rank.FIFTH;
