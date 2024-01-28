@@ -28,9 +28,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
         http
-//                .exceptionHandling((handling) ->
-//                        handling.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-//                )
+
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new ExceptionFilter(objectMapper), JwtTokenFilter.class)
@@ -38,18 +36,12 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests((registry) ->
-                        registry.requestMatchers("/**").permitAll()
-                                .requestMatchers("/api/authentication").permitAll()
+                        registry.requestMatchers("/api/v1/credentials/login2/**").permitAll()
+                                .requestMatchers("/api/v1/credentials/singup2").permitAll()
                                 .requestMatchers("/api/signup").permitAll()
                                 .anyRequest().authenticated()
                 );
 
-//        .authorizeHttpRequests(request -> request
-//                .requestMatchers(
-//                        "/test"
-//                ).permitAll()
-//        )
-//                .authorizeHttpRequests(request -> request.anyRequest().authenticated());
 
         return http.build();
     }
