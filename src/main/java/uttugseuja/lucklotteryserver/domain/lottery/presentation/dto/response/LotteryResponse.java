@@ -1,9 +1,12 @@
 package uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Getter;
 import uttugseuja.lucklotteryserver.domain.lottery.domain.vo.LotteryBaseInfoVo;
+import uttugseuja.lucklotteryserver.global.common.Rank;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 public class LotteryResponse {
@@ -12,26 +15,23 @@ public class LotteryResponse {
 
     private LocalDate winningDate;
 
-    private Integer firstNum;
+    private LotteryNumbersResponse lotteryNumbersResponse;
 
-    private Integer secondNum;
+    private WinningLotteryNumbersResponse winningLotteryNumbersResponse;
 
-    private Integer thirdNum;
+    private List<Integer> correctNumbers;
 
-    private Integer fourthNum;
+    private Rank rank;
 
-    private Integer fifthNum;
-
-    private Integer sixthNum;
-
-    public LotteryResponse(LotteryBaseInfoVo lotteryBaseInfoVo) {
-        round = lotteryBaseInfoVo.getRound();
-        winningDate = lotteryBaseInfoVo.getWinningDate();
-        firstNum = lotteryBaseInfoVo.getFirstNum();
-        secondNum = lotteryBaseInfoVo.getSecondNum();
-        thirdNum = lotteryBaseInfoVo.getThirdNum();
-        fourthNum = lotteryBaseInfoVo.getFourthNum();
-        fifthNum = lotteryBaseInfoVo.getFifthNum();
-        sixthNum = lotteryBaseInfoVo.getSixthNum();
+    public LotteryResponse(LotteryNumbersResponse lotteryNumbersResponse,
+                           WinningLotteryNumbersResponse winningLotteryNumbersResponse,
+                           List<Integer> correctNumbers,
+                           LotteryBaseInfoVo lotteryBaseInfoVo) {
+        this.round = lotteryBaseInfoVo.getRound();
+        this.winningDate = lotteryBaseInfoVo.getWinningDate();
+        this.lotteryNumbersResponse = lotteryNumbersResponse;
+        this.winningLotteryNumbersResponse = winningLotteryNumbersResponse;
+        this.correctNumbers = correctNumbers;
+        this.rank = lotteryBaseInfoVo.getRank();
     }
 }

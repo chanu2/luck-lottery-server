@@ -72,6 +72,11 @@ public class Lottery {
                 .fourthNum(fourthNum)
                 .fifthNum(fifthNum)
                 .sixthNum(sixthNum)
+                .rank(rank)
                 .build();
+    }
+
+    public void updateRank(Rank rank) {
+        this.rank = rank;
     }
 }
