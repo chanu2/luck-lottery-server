@@ -84,4 +84,19 @@ public class WinningPensionLotteryService {
         }
     }
 
+    private LotteryDrawDayDto getLottoDayAndRound(String dayAndRound){
+
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher(dayAndRound);
+        List<Integer> parsedData = new ArrayList<>();
+
+        while (matcher.find()) {
+            parsedData.add(Integer.parseInt(matcher.group()));
+        }
+        LocalDateTime drawDay = LocalDateTime.of(parsedData.get(1), parsedData.get(2), parsedData.get(3), 17,0);
+        Integer drawRound = parsedData.get(0);
+        return new LotteryDrawDayDto(drawRound,drawDay);
+
+    }
+
 }
