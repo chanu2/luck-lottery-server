@@ -40,6 +40,8 @@ public class WinningPensionLotteryService {
     private final static String  GROUP_CSS_QUERY = "h4 strong";
     private final static String  WiN_NUM_CSS_QUERY = "li";
 
+
+
     private WinningPensionLotteryCrawlingDto crawlingWinningPensionLottery(String round) throws LuckLotteryIoException {
 
         List<Integer> winningNumber = new ArrayList<>();
@@ -86,6 +88,19 @@ public class WinningPensionLotteryService {
         } catch (NullPointerException e) {
             throw DataNotFoundException.EXCEPTION;
         }
+    }
+
+    public void saveWinningPensionLottery(Integer starRound, Integer endRound) throws LuckLotteryIoException {
+
+        List<WinningPensionLottery> winningPensionLotteryList= new ArrayList<>();
+
+        for(int i = starRound; i<=endRound; i++){
+            WinningPensionLottery extracted = createWinningPensionLottery(String.valueOf(i));
+            winningPensionLotteryList.add(extracted);
+
+        }
+        winningPensionLotteryJdbcRepository.batchInsertWinningPensionLottery(winningPensionLotteryList);
+
     }
 
     public WinningPensionLottery createWinningPensionLottery(String round) throws LuckLotteryIoException {
