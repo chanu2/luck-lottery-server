@@ -18,6 +18,7 @@ public enum ErrorCode {
     /* 404 NOT_FOUND : Resource를 찾을 수 없음 */
     LOTTERY_ROUND_NOT_FOUND(404, "해당 회차의 로또 정보를 찾을 수 없습니다."),
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
+    WINNING_PENSION_LOTTERY_NOT_FOUND(404,  "연금 복권의 당첨 번호를 찾을수 없습니다"),
 
     /* 500 */
     INTERNAL_SERVER_ERROR(500,"서버 에러")
