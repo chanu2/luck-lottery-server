@@ -1,0 +1,39 @@
+spring:
+  config:
+    import: "optional:configserver:"
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${MARIADB_HOST}:${MARIADB_PORT}/${DB_NAME}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${MARIADB_USERNAME}
+    password: ${MARIADB_PASSWORD}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: ture
+
+logging.level:
+  org.hibernate.SQL: debug
+
+oauth:
+  kakao:
+    app-id: ${KAKAO_APP_ID}
+    client-id: ${CLIENT_ID}
+    redirect-url: ${REDIRECT_URL}
+    base-url: ${BASE_URL}
+  google:
+    app-id: ${GOOGLE_APP_ID}
+
+auth:
+  jwt:
+    secretKey: ${JWT_SECRET_KEY}
+    accessExp: ${JWT_ACCESS_EXP}
+    refreshExp: ${JWT_REFRESH_EXP}
+    header: ${JWT_HEADER}
+    prefix: ${JWT_PREFIX}
