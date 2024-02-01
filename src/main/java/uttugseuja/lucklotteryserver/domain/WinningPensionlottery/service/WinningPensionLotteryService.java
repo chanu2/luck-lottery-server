@@ -40,7 +40,11 @@ public class WinningPensionLotteryService {
     private final static String  GROUP_CSS_QUERY = "h4 strong";
     private final static String  WiN_NUM_CSS_QUERY = "li";
 
-
+    public WinningPensionLottery getRecentWinningPensionLottery() {
+        return winningPensionLotteryRepository
+                .findFirstByOrderByRoundDesc()
+                .orElseThrow(()-> WinningPensionLotteryNotFoundException.EXCEPTION);
+    }
 
     private WinningPensionLotteryCrawlingDto crawlingWinningPensionLottery(String round) throws LuckLotteryIoException {
 
