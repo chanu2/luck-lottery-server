@@ -3,17 +3,17 @@ spring:
     import: "optional:configserver:"
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/luckLottery
-    username: root
-    password: 1234
+    url: jdbc:mariadb://${MARIADB_HOST}:${MARIADB_PORT}/${DB_NAME}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${MARIADB_USERNAME}
+    password: ${MARIADB_PASSWORD}
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: ture
