@@ -10,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
+import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.WinningPensionLottery;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.repository.WinningPensionLotteryJdbcRepository;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.repository.WinningPensionLotteryRepository;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.request.LotteryDrawDayDto;
@@ -17,6 +18,7 @@ import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.request.Win
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.CrawlingIOException;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.DataNotFoundException;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.PageAccessException;
+import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.WinningPensionLotteryNotFoundException;
 import uttugseuja.lucklotteryserver.global.error.exception.LuckLotteryIoException;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -30,6 +32,8 @@ import java.util.regex.Pattern;
 @Slf4j
 public class WinningPensionLotteryService {
 
+    private final WinningPensionLotteryJdbcRepository winningPensionLotteryJdbcRepository;
+    private final WinningPensionLotteryRepository winningPensionLotteryRepository;
     private final static String PENSION_LOTTERY_URL = "https://m.dhlottery.co.kr/gameResult.do?method=win720&Round=";
     private final static String  DRAW_TIME_CSS_QUERY = "div.wrap_select option[selected]";
     private final static String  PRIZE_CSS_QUERY = "div.prize";
@@ -84,19 +88,47 @@ public class WinningPensionLotteryService {
         }
     }
 
+    public WinningPensionLottery createWinningPensionLottery(String round) throws LuckLotteryIoException {
+
+        WinningPensionLotteryCrawlingDto process = crawlingWinningPensionLottery(round);
+        List<Integer> nums = process.getWinningNumbers();
+        return WinningPensionLottery.builder()
+                .lotteryDrawTime(process.getLotteryDrawTime())
+                .round(process.getPensionLotteryRound())
+                .lotteryGroup(nums.get(0))
+                .winningFirstNum(nums.get(1))
+                .winningSecondNum(nums.get(2))
+                .winningThirdNum(nums.get(3))
+                .winningFourthNum(nums.get(4))
+                .winningFifthNum(nums.get(5))
+                .winningSixthNum(nums.get(6))
+                .bonusFirstNum(nums.get(7))
+                .bonusSecondNum(nums.get(8))
+                .bonusThirdNum(nums.get(9))
+                .bonusFourthNum(nums.get(10))
+                .bonusFifthNum(nums.get(11))
+                .bonusSixthNum(nums.get(12))
+                .build();
+    }
+
     private LotteryDrawDayDto getLottoDayAndRound(String dayAndRound){
 
         Pattern pattern = Pattern.compile("\\d+");
         Matcher matcher = pattern.matcher(dayAndRound);
+
         List<Integer> parsedData = new ArrayList<>();
 
         while (matcher.find()) {
             parsedData.add(Integer.parseInt(matcher.group()));
         }
+
         LocalDateTime drawDay = LocalDateTime.of(parsedData.get(1), parsedData.get(2), parsedData.get(3), 17,0);
+
         Integer drawRound = parsedData.get(0);
+
         return new LotteryDrawDayDto(drawRound,drawDay);
 
     }
+
 
 }
