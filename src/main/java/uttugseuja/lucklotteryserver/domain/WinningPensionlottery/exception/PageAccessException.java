@@ -10,4 +10,3 @@ public class PageAccessException extends LuckLotteryIoException {
         super(ErrorCode.PAGE_ACCESS_LOTTERY_ERROR);
     }
 }
-성
