@@ -2,7 +2,6 @@ package uttugseuja.lucklotteryserver.domain.pensionlottery.presentation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.request.CreateLotteryRequest;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.request.CreatePensionLotteryRequest;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.response.RandomPensionLotteryResponse;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.service.PensionLotteryService;
@@ -18,6 +17,11 @@ public class PensionLotteryController {
     @GetMapping("/random")
     public RandomPensionLotteryResponse createRandomLottery() {
         return pensionLotteryService.createRandomPensionLottery();
+    }
+
+    @PostMapping("/save")
+    public void savePensionLottery(@RequestBody CreatePensionLotteryRequest createPensionLotteryRequest) {
+        pensionLotteryService.savePensionLottery(createPensionLotteryRequest);
     }
 
 }
