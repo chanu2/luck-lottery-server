@@ -13,6 +13,8 @@ import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.reque
 import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.response.RandomPensionLotteryResponse;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.global.utils.user.UserUtils;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -30,6 +32,11 @@ public class PensionLotteryService {
         List<Integer> numbers = createRandomPensionNumbers();
         WinningPensionLottery winningPensionLottery = winningPensionLotteryService.getRecentWinningPensionLottery();
         Integer randomRound = winningPensionLottery.getRound() + 1;
+
+        if(LocalDateTime.now().isAfter(winningPensionLottery.getLotteryDrawTime().plusDays(7))){
+            randomRound+=1;
+        }
+
         return new RandomPensionLotteryResponse(numbers,randomRound);
     }
 
