@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import uttugseuja.lucklotteryserver.domain.lottery.domain.vo.LotteryBaseInfoVo;
+import uttugseuja.lucklotteryserver.domain.pensionlottery.domain.vo.PensionLotteryBaseInfoVo;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.global.common.Rank;
 import uttugseuja.lucklotteryserver.global.database.BaseEntity;
@@ -61,6 +63,23 @@ public class PensionLottery extends BaseEntity {
         this.pensionFourthNum = pensionFourthNum;
         this.pensionFifthNum = pensionFifthNum;
         this.pensionSixthNum = pensionSixthNum;
+    }
+
+    public PensionLotteryBaseInfoVo getPensionLotteryBaseInfoVo() {
+        return PensionLotteryBaseInfoVo.builder()
+                .pensionLotteryId(id)
+                .rank(rank)
+                .pensionRound(pensionRound)
+                .pensionGroup(pensionGroup)
+                .pensionFirstNum(pensionFirstNum)
+                .pensionSecondNum(pensionSecondNum)
+                .pensionThirdNum(pensionThirdNum)
+                .pensionFourthNum(pensionFourthNum)
+                .pensionFifthNum(pensionFifthNum)
+                .pensionSixthNum(pensionSixthNum)
+                .createdDate(getCreatedDate())
+                .lastModifyDate(getLastModifyDate())
+                .build();
     }
 
 }

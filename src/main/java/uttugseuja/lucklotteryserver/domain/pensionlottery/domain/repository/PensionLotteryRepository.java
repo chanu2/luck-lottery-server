@@ -8,5 +8,5 @@ import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import java.util.List;
 
 public interface PensionLotteryRepository extends JpaRepository<PensionLottery, Long> {
-
+    List<PensionLottery> findByUserId(Long id);
 }

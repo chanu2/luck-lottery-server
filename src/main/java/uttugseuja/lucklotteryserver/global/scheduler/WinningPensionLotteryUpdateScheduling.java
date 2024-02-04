@@ -18,7 +18,7 @@ public class WinningPensionLotteryUpdateScheduling {
     private final WinningPensionLotteryService winningPensionLotteryService;
     private final WinningPensionLotteryRepository winningPensionLotteryRepository;
 
-    @Scheduled(cron = "0 0/2 * * * *")
+    //@Scheduled(cron = "0 0/2 * * * *")
     //@Scheduled(cron = "0 30/2 19-20 * * THU") 매주 목요일 19시 30분부터 20시 30분까지 2분마다
     @Transactional
     public void chatCaching() throws LuckLotteryIoException {
