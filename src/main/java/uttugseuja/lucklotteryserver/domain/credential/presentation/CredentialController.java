@@ -1,5 +1,9 @@
 package uttugseuja.lucklotteryserver.domain.credential.presentation;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,38 +17,47 @@ import uttugseuja.lucklotteryserver.domain.credential.service.OauthProvider;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
-
 @RestController
 @RequestMapping("/api/v1/credentials")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "인증 관련 컨트롤러", description = "oauth, token refresh 기능을 담당")
 public class CredentialController {
 
     private final CredentialService credentialService;
 
+    @Operation(summary = "테스트용")
     @PostMapping("/login2/{userId}")
     public AccessTokenDto loginTest(@PathVariable("userId") Long userId){
         AccessTokenDto result = credentialService.login(userId);
         return result;
     }
 
+    @Operation(summary = "테스트용")
     @PostMapping("/singup2")
     public void signUptTest(@RequestBody RegisterRequest registerRequest){
         credentialService.singUpTest(registerRequest);
     }
 
+    @Operation(summary = "카카오 링크 받기 테스트용")
     @GetMapping("/oauth/link/kakao")
     public OauthLoginLinkResponse getKakaoOauthLink() {
         return new OauthLoginLinkResponse(credentialService.getOauthLink(OauthProvider.KAKAO));
     }
 
+    @Operation(summary = "카카오에서 Id token 테스트용")
     @GetMapping("/oauth/kakao")
     public AfterOauthResponse kakaoAuth(OauthCodeRequest oauthCodeRequest) {
         log.info("code = {}",oauthCodeRequest.getCode());
         return credentialService.getIdTokenToCode(OauthProvider.KAKAO, oauthCodeRequest.getCode());
     }
 
+    @Operation(summary = "Id Token 검증")
     @GetMapping("/oauth/valid/register")
+    @Parameters({
+            @Parameter(name = "idToken", description = "idToken", required = true),
+            @Parameter(name = "provider", description = "idToken 제공자", required = true)
+    })
     public CheckRegisteredResponse valid(
             @RequestParam("idToken") String token,
             @RequestParam("provider") OauthProvider oauthProvider) throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -52,6 +65,11 @@ public class CredentialController {
         return credentialService.getUserAvailableRegister(token, oauthProvider);
     }
 
+    @Operation(summary = "로그인")
+    @Parameters({
+            @Parameter(name = "idToken", description = "idToken", required = true),
+            @Parameter(name = "provider", description = "idToken 제공자", required = true)
+    })
     @PostMapping("/login")
     public AuthTokensResponse loginUser(
             @RequestParam("idToken") String token,
@@ -59,7 +77,12 @@ public class CredentialController {
         return credentialService.loginUserByOCIDToken(token, oauthProvider);
     }
 
+    @Operation(summary = "회원 가입")
     @PostMapping("/register")
+    @Parameters({
+            @Parameter(name = "idToken", description = "idToken", required = true),
+            @Parameter(name = "provider", description = "idToken 제공자", required = true)
+    })
     public AuthTokensResponse registerUser(
             @RequestParam("idToken") String token,
             @RequestParam("provider") OauthProvider oauthProvider,
@@ -67,6 +90,7 @@ public class CredentialController {
         return credentialService.registerUserByOCIDToken(token, registerRequest, oauthProvider);
     }
 
+    @Operation(summary = "토큰 리프레쉬")
     @PostMapping("/refresh")
     public AuthTokensResponse refreshingToken(
             @Valid @RequestBody TokenRefreshRequest tokenRefreshRequest) {
