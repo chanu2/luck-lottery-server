@@ -55,6 +55,9 @@ dependencies {
 
 	//jsuop
 	implementation 'org.jsoup:jsoup:1.15.3'
+
+	//swagger
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.3.0'
 }
 
 dependencyManagement {
