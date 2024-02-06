@@ -44,6 +44,31 @@ public class PensionLotteryService {
     private final WinningPensionLotteryService winningPensionLotteryService;
     private final PensionLotteryRepository pensionLotteryRepository;
 
+    private Rank getPensionLotteryResult(Integer count){
+
+        switch(count) {
+            case 0:
+                return Rank.NONE;
+            case 1:
+                return Rank.SEVENTH;
+            case 2:
+                return Rank.SIXTH;
+            case 3:
+                return Rank.FIFTH;
+            case 4:
+                return Rank.FOURTH;
+            case 5:
+                return Rank.THIRD;
+            case 6:
+                return Rank.SECOND;
+            case 7:
+                return Rank.FIRST;
+            default:
+                throw new RuntimeException("해당 타입 없음.");
+        }
+
+    }
+
     private Integer calculateCorrectNumbers(List<Boolean> checkNumbers){
 
         int count = 0;
