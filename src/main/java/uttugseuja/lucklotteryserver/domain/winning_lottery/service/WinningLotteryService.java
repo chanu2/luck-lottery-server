@@ -10,6 +10,8 @@ import uttugseuja.lucklotteryserver.domain.lottery.exception.BadRoundException;
 import uttugseuja.lucklotteryserver.domain.winning_lottery.domain.WinningLottery;
 import uttugseuja.lucklotteryserver.domain.winning_lottery.domain.repository.WinningLotteryJdbcRepository;
 import uttugseuja.lucklotteryserver.domain.winning_lottery.domain.repository.WinningLotteryRepository;
+import uttugseuja.lucklotteryserver.domain.winning_lottery.exception.WinningLotteryNotFoundException;
+import uttugseuja.lucklotteryserver.domain.winning_lottery.presentation.dto.response.WinningLotteryResponse;
 import uttugseuja.lucklotteryserver.global.api.client.WinningLotteryClient;
 import uttugseuja.lucklotteryserver.global.api.dto.WinningLotteryDto;
 
@@ -39,6 +41,14 @@ public class WinningLotteryService {
         saveWinningLotteriesInDB(winningLotteries);
     }
 
+    public WinningLotteryResponse getRecentRoundWinningLottery() {
+        int recentRound = getRecentRound();
+
+        WinningLottery winningLottery = queryWinningLottery(recentRound);
+
+        return getWinningLotteryResponse(winningLottery);
+    }
+
     public int getRecentRound() {
         LocalDateTime startDate = LocalDateTime.of(2002, 12, 7, 21, 0);
         LocalDateTime now = LocalDateTime.now();
@@ -46,6 +56,16 @@ public class WinningLotteryService {
         int days = (int) ChronoUnit.DAYS.between(startDate, now);
 
         return days / 7 + 1;
+    }
+
+    public WinningLottery queryWinningLottery(Integer round) {
+        return winningLotteryRepository
+                .findByRound(round)
+                .orElseThrow(() -> WinningLotteryNotFoundException.EXCEPTION);
+    }
+
+    private WinningLotteryResponse getWinningLotteryResponse(WinningLottery winningLottery) {
+        return new WinningLotteryResponse(winningLottery.getWinningLotteryBaseInfoVo());
     }
 
     private List<WinningLottery> getWinningLotteries(int recentRound) {
