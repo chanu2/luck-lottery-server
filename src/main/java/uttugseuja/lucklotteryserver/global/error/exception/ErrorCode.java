@@ -20,6 +20,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
     WINNING_PENSION_LOTTERY_NOT_FOUND(404,  "연금 복권의 당첨 번호를 찾을수 없습니다"),
     OVER_LOTTERY_ROUND(404, "해당 회차는 최대 회차 범위를 초과 했습니다."),
+    WINNING_LOTTERY_NOT_FOUND(404, "해당 회차의 당첨 로또를 찾을 수 없습니다."),
 
     /* 500 */
     INTERNAL_SERVER_ERROR(500,"서버 에러"),
