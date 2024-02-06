@@ -173,11 +173,6 @@ public class PensionLotteryService {
         List<Integer> numbers = createRandomPensionNumbers();
         WinningPensionLottery winningPensionLottery = winningPensionLotteryService.getRecentWinningPensionLottery();
         Integer randomRound = winningPensionLottery.getRound() + 1;
-
-        if(LocalDateTime.now().isAfter(winningPensionLottery.getLotteryDrawTime().plusDays(7))){
-            randomRound+=1;
-        }
-
         return new RandomPensionLotteryResponse(numbers,randomRound);
     }
 
