@@ -44,6 +44,25 @@ public class PensionLotteryService {
     private final WinningPensionLotteryService winningPensionLotteryService;
     private final PensionLotteryRepository pensionLotteryRepository;
 
+    private PensionLotteryResponse getPensionLotteryResponse(PensionLottery pensionLottery,
+                                                             WinningPensionLottery winningPensionLottery,
+                                                             List<Boolean> correctNumbers,
+                                                             List<Boolean> bonusCorrectNumbers) {
+
+        PensionLotteryNumbersResponse pensionNumbersResponse = new PensionLotteryNumbersResponse(pensionLottery.getPensionLotteryBaseInfoVo());
+        WinningPensionLotteryNumbersResponse winningPensionNumbersResponse = new WinningPensionLotteryNumbersResponse(winningPensionLottery.getWinningPensionLotteryBaseInfoVo());
+        WinningPensionLotteryBonusNumbersResponse winningPensionLotteryBonusNumbersResponse = new WinningPensionLotteryBonusNumbersResponse(winningPensionLottery.getWinningPensionLotteryBaseInfoVo());
+
+        return new PensionLotteryResponse(
+                pensionNumbersResponse,
+                winningPensionNumbersResponse,
+                winningPensionLotteryBonusNumbersResponse,
+                pensionLottery.getPensionLotteryBaseInfoVo(),
+                correctNumbers,
+                bonusCorrectNumbers
+        );
+    }
+
     private Rank getPensionLotteryResult(Integer count){
 
         switch(count) {
