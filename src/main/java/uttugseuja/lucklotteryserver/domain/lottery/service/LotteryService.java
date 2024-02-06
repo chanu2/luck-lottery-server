@@ -14,6 +14,7 @@ import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.Lot
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.RandomLotteryResponse;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.WinningLotteryNumbersResponse;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
+import uttugseuja.lucklotteryserver.domain.winning_lottery.service.WinningLotteryUtils;
 import uttugseuja.lucklotteryserver.global.api.client.WinningLotteryClient;
 import uttugseuja.lucklotteryserver.global.api.dto.WinningLotteryDto;
 import uttugseuja.lucklotteryserver.global.common.Rank;
@@ -33,8 +34,9 @@ public class LotteryService {
 
     private final WinningLotteryClient winningLotteryClient;
     private final LotteryRepository lotteryRepository;
-    private static final String method = "getLottoNumber";
     private final UserUtils userUtils;
+    private final WinningLotteryUtils winningLotteryUtils;
+    private static final String method = "getLottoNumber";
 
     public RandomLotteryResponse createRandomLottery() {
         List<Integer> randomNumbers = createRandomNumbers();
@@ -47,9 +49,13 @@ public class LotteryService {
     }
 
     public void saveLottery(CreateLotteryRequest createLotteryRequest) {
+        int recentRound = winningLotteryUtils.getRecentRound();
+        LocalDate winningDate = winningLotteryUtils.getWinningDate(recentRound);
+
         User user = userUtils.getUserFromSecurityContext();
 
-        Lottery lottery = makeLottery(createLotteryRequest, user);
+        Lottery lottery = makeLottery(user, recentRound + 1,
+                winningDate.plusDays(7), createLotteryRequest);
 
         lotteryRepository.save(lottery);
     }
@@ -136,11 +142,12 @@ public class LotteryService {
         return LocalDate.parse(winningDate);
     }
 
-    private Lottery makeLottery(CreateLotteryRequest createLotteryRequest, User user) {
+    private Lottery makeLottery(User user, int recentRound, LocalDate winningDate,
+                                CreateLotteryRequest createLotteryRequest) {
         return Lottery.builder()
                 .user(user)
-                .round(createLotteryRequest.getRound())
-                .winningDate(createLotteryRequest.getWinningDate())
+                .round(recentRound)
+                .winningDate(winningDate)
                 .firstNum(createLotteryRequest.getFirstNum())
                 .secondNum(createLotteryRequest.getSecondNum())
                 .thirdNum(createLotteryRequest.getThirdNum())
@@ -224,4 +231,5 @@ public class LotteryService {
         }
         return false;
     }
+
 }
