@@ -63,6 +63,20 @@ public class PensionLotteryService {
         );
     }
 
+    private PensionLotteryResponse getPensionLotteryEmptyResponse(PensionLottery pensionLottery) {
+
+        PensionLotteryNumbersResponse pensionNumbersResponse = new PensionLotteryNumbersResponse(pensionLottery.getPensionLotteryBaseInfoVo());
+
+        return new PensionLotteryResponse(
+                pensionNumbersResponse,
+                null,
+                null,
+                pensionLottery.getPensionLotteryBaseInfoVo(),
+                null,
+                null
+        );
+    }
+
     private Rank getPensionLotteryResult(Integer count){
 
         switch(count) {
