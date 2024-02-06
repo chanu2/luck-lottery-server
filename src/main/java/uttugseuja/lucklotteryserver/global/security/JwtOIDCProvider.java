@@ -9,6 +9,7 @@ import uttugseuja.lucklotteryserver.global.exception.ExpiredTokenException;
 import uttugseuja.lucklotteryserver.global.exception.InvalidTokenException;
 
 import java.math.BigInteger;
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -76,19 +77,17 @@ public class JwtOIDCProvider {
         }
     }
 
-
-    private PublicKey getRSAPublicKey(String modulus, String exponent)
+    private Key getRSAPublicKey(String modulus, String exponent)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
-
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        byte[] decodeN = Base64.getUrlDecoder().decode(modulus);
+        byte[] decodeE = Base64.getUrlDecoder().decode(exponent);
+        BigInteger n = new BigInteger(1, decodeN);
+        BigInteger e = new BigInteger(1, decodeE);
 
-        BigInteger n = new BigInteger(1, Base64.getDecoder().decode(modulus));
-        BigInteger e = new BigInteger(1, Base64.getDecoder().decode(exponent));
-        RSAPublicKeySpec keySpec = new RSAPublicKeySpec(n,e);
+        RSAPublicKeySpec keySpec = new RSAPublicKeySpec(n, e);
         return keyFactory.generatePublic(keySpec);
     }
-
-
 
 
 }
