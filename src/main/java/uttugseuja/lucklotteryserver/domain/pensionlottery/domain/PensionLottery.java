@@ -9,6 +9,7 @@ import uttugseuja.lucklotteryserver.domain.pensionlottery.domain.vo.PensionLotte
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.global.common.Rank;
 import uttugseuja.lucklotteryserver.global.database.BaseEntity;
+import java.time.LocalDateTime;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -30,6 +31,8 @@ public class PensionLottery extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Rank rank;
 
+    private LocalDateTime winningDate;
+    private Boolean checkWinningBonus;
     private Integer pensionRound;
     private Integer pensionGroup;
     private Integer pensionFirstNum;
@@ -44,7 +47,9 @@ public class PensionLottery extends BaseEntity {
                    Long id,
                    User user,
                    Rank rank,
+                   Boolean checkWinningBonus,
                    Integer pensionRound,
+                   LocalDateTime winningDate,
                    Integer pensionGroup,
                    Integer pensionFirstNum,
                    Integer pensionSecondNum,
@@ -55,7 +60,9 @@ public class PensionLottery extends BaseEntity {
         this.id =id;
         this.user = user;
         this.rank = rank;
+        this.checkWinningBonus = checkWinningBonus;
         this.pensionRound = pensionRound;
+        this.winningDate = winningDate;
         this.pensionGroup = pensionGroup;
         this.pensionFirstNum = pensionFirstNum;
         this.pensionSecondNum = pensionSecondNum;
@@ -69,6 +76,8 @@ public class PensionLottery extends BaseEntity {
         return PensionLotteryBaseInfoVo.builder()
                 .pensionLotteryId(id)
                 .rank(rank)
+                .checkWinningBonus(checkWinningBonus)
+                .winningDate(winningDate)
                 .pensionRound(pensionRound)
                 .pensionGroup(pensionGroup)
                 .pensionFirstNum(pensionFirstNum)
