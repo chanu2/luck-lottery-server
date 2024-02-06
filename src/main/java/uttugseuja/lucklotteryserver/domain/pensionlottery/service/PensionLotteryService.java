@@ -44,6 +44,11 @@ public class PensionLotteryService {
     private final WinningPensionLotteryService winningPensionLotteryService;
     private final PensionLotteryRepository pensionLotteryRepository;
 
+    private List<Boolean> checkCorrectNumbers(PensionLottery pensionLottery, WinningPensionLottery winningPensionLottery){
+        return checkNumbers(pensionLottery, winningPensionLottery.getWinningNumbers(), 0);
+    }
+
+
     private List<Boolean> checkNumbers(PensionLottery pensionLottery, List<Integer> winningNumbers, int offset){
 
         List<Boolean> check = new ArrayList<>();
