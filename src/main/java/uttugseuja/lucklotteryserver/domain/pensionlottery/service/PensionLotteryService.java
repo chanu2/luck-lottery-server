@@ -44,6 +44,29 @@ public class PensionLotteryService {
     private final WinningPensionLotteryService winningPensionLotteryService;
     private final PensionLotteryRepository pensionLotteryRepository;
 
+    private PensionLotteryResponse updatePensionLottery(PensionLottery pensionLottery) {
+
+        WinningPensionLottery recentWinningPensionLottery = winningPensionLotteryService.getRecentWinningPensionLottery();
+        Integer recentRound = recentWinningPensionLottery.getRound();
+
+        if(pensionLottery.getPensionRound() <= recentRound) {
+            WinningPensionLottery winningPensionLottery = winningPensionLotteryService.getRecentWinningPensionLotteryByRound(pensionLottery.getPensionRound());
+            List<Boolean> checkCorrectNumbers = checkCorrectNumbers(pensionLottery, winningPensionLottery);
+            List<Boolean> checkBonusCorrectNumbers = checkBonusCorrectNumbers(pensionLottery, winningPensionLottery);
+
+            if(pensionLottery.getRank() == null) {
+                Integer integer = calculateCorrectNumbers(checkCorrectNumbers);
+                Rank pensionLotteryResult = getPensionLotteryResult(integer);
+                pensionLottery.updateRank(pensionLotteryResult);
+                Integer correctBonusCount = calculateCorrectNumbers(checkBonusCorrectNumbers);
+                updateCorrectBonus(correctBonusCount,pensionLottery);
+            }
+            return getPensionLotteryResponse(pensionLottery, winningPensionLottery,checkCorrectNumbers,checkBonusCorrectNumbers);
+
+        }
+        return getPensionLotteryEmptyResponse(pensionLottery);
+    }
+
     private PensionLotteryResponse getPensionLotteryResponse(PensionLottery pensionLottery,
                                                              WinningPensionLottery winningPensionLottery,
                                                              List<Boolean> correctNumbers,
