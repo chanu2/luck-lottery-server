@@ -44,6 +44,17 @@ public class PensionLotteryService {
     private final WinningPensionLotteryService winningPensionLotteryService;
     private final PensionLotteryRepository pensionLotteryRepository;
 
+    @Transactional
+    public List<PensionLotteryResponse> getPensionLottery(){
+
+        Long currentUserId = SecurityUtils.getCurrentUserId();
+        List<PensionLottery> pensionLotteries = pensionLotteryRepository.findByUserId(currentUserId);
+
+        return pensionLotteries.stream()
+                .map(this::updatePensionLottery)
+                .collect(Collectors.toList());
+    }
+
     private PensionLotteryResponse updatePensionLottery(PensionLottery pensionLottery) {
 
         WinningPensionLottery recentWinningPensionLottery = winningPensionLotteryService.getRecentWinningPensionLottery();
