@@ -25,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class WinningLotteryService {
+public class WinningLotteryService implements WinningLotteryUtils{
 
     private final WinningLotteryClient winningLotteryClient;
     private final WinningLotteryRepository winningLotteryRepository;
@@ -56,6 +56,12 @@ public class WinningLotteryService {
         int days = (int) ChronoUnit.DAYS.between(startDate, now);
 
         return days / 7 + 1;
+    }
+
+    public LocalDate getWinningDate(Integer round) {
+        WinningLottery winningLottery = queryWinningLottery(round);
+
+        return winningLottery.getWinningDate();
     }
 
     public WinningLottery queryWinningLottery(Integer round) {
