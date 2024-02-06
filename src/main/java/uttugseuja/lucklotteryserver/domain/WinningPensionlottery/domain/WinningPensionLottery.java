@@ -7,8 +7,9 @@ import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.vo.WinningPensionLotteryBaseInfoVo;
 import java.time.LocalDateTime;
+
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -72,4 +73,26 @@ public class WinningPensionLottery {
         this.bonusFifthNum = bonusFifthNum;
         this.bonusSixthNum = bonusSixthNum;
     }
+
+    public WinningPensionLotteryBaseInfoVo getWinningPensionLotteryBaseInfoVo() {
+        return WinningPensionLotteryBaseInfoVo.builder()
+                .winningPensionLotteryId(id)
+                .round(round)
+                .lotteryDrawTime(lotteryDrawTime)
+                .lotteryGroup(lotteryGroup)
+                .winningFirstNum(winningFirstNum)
+                .winningSecondNum(winningSecondNum)
+                .winningThirdNum(winningThirdNum)
+                .winningFourthNum(winningFourthNum)
+                .winningFifthNum(winningFifthNum)
+                .winningSixthNum(winningSixthNum)
+                .bonusFirstNum(bonusFirstNum)
+                .bonusSecondNum(bonusSecondNum)
+                .bonusThirdNum(bonusThirdNum)
+                .bonusFourthNum(bonusFourthNum)
+                .bonusFifthNum(bonusFifthNum)
+                .bonusSixthNum(bonusSixthNum)
+                .build();
+    }
+
 }
