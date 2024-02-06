@@ -48,6 +48,9 @@ public class PensionLotteryService {
         return checkNumbers(pensionLottery, winningPensionLottery.getWinningNumbers(), 0);
     }
 
+    private List<Boolean> checkBonusCorrectNumbers(PensionLottery pensionLottery, WinningPensionLottery winningPensionLottery){
+        return checkNumbers(pensionLottery, winningPensionLottery.getWinningBonusNumbers(), 1);
+    }
 
     private List<Boolean> checkNumbers(PensionLottery pensionLottery, List<Integer> winningNumbers, int offset){
 
