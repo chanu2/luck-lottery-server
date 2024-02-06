@@ -1,5 +1,6 @@
 package uttugseuja.lucklotteryserver.domain.pensionlottery.presentation;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class PensionLotteryController {
         pensionLotteryService.savePensionLottery(createPensionLotteryRequest);
     }
 
+    @Operation(summary = "나의 연금복권 조회")
     @GetMapping("/get")
     @Parameters({
             @Parameter(name = "page", description = "Page number", example = "0", required = false),
