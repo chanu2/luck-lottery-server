@@ -3,6 +3,11 @@ package uttugseuja.lucklotteryserver.domain.pensionlottery.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.security.SecurityUtil;
+import org.hibernate.annotations.Check;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.WinningPensionLottery;
@@ -36,14 +41,16 @@ public class PensionLotteryService {
     private final PensionLotteryRepository pensionLotteryRepository;
 
     @Transactional
-    public List<PensionLotteryResponse> getPensionLottery(){
+    public Slice<PensionLotteryResponse> getPensionLottery(Pageable pageable){
 
         Long currentUserId = SecurityUtils.getCurrentUserId();
-        List<PensionLottery> pensionLotteries = pensionLotteryRepository.findByUserId(currentUserId);
+        Slice<PensionLottery> pensionLotteries = pensionLotteryRepository.findByUserId(currentUserId, pageable);
 
-        return pensionLotteries.stream()
+        List<PensionLotteryResponse> pensionLotteryResponses = pensionLotteries.stream()
                 .map(this::updatePensionLottery)
                 .collect(Collectors.toList());
+
+        return new SliceImpl<>(pensionLotteryResponses, pageable, pensionLotteries.hasNext());
     }
 
     private PensionLotteryResponse updatePensionLottery(PensionLottery pensionLottery) {
