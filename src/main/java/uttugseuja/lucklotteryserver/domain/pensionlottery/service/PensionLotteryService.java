@@ -192,4 +192,12 @@ public class PensionLotteryService {
                 .build();
     }
 
+    private void updateCorrectBonus(Integer correctBonusCount,PensionLottery pensionLottery){
+
+        if(correctBonusCount == 6){
+            pensionLottery.updateCheckWinningBonus();
+        }
+
+    }
+
 }
