@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface WinningPensionLotteryRepository extends JpaRepository<WinningPensionLottery, Long> {
     Optional<WinningPensionLottery> findFirstByOrderByRoundDesc();
+
+    Optional<WinningPensionLottery> findByRound(Integer round);
 }
