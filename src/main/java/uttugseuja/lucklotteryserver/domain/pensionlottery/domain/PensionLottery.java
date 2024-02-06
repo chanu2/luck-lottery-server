@@ -107,4 +107,12 @@ public class PensionLottery extends BaseEntity {
         return numbers;
     }
 
+    public void updateRank(Rank rank) {
+        this.rank = rank;
+    }
+
+    public void updateCheckWinningBonus() {
+        this.checkWinningBonus = true;
+    }
+
 }
