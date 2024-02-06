@@ -1,12 +1,16 @@
 package uttugseuja.lucklotteryserver.domain.pensionlottery.presentation;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.request.CreatePensionLotteryRequest;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.response.PensionLotteryResponse;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.response.RandomPensionLotteryResponse;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.service.PensionLotteryService;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,8 +30,16 @@ public class PensionLotteryController {
     }
 
     @GetMapping("/get")
-    public List<PensionLotteryResponse> getLotteries() {
-        return pensionLotteryService.getPensionLottery();
+    @Parameters({
+            @Parameter(name = "page", description = "Page number", example = "0", required = false),
+            @Parameter(name = "size", description = "Page size", example = "10", required = false)
+    })
+    public Slice<PensionLotteryResponse> getLotteries(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "size", defaultValue = "10") Integer size) {
+
+        PageRequest pageRequest = PageRequest.of(page,size, Sort.Direction.DESC,"pensionRound");
+        return pensionLotteryService.getPensionLottery(pageRequest);
     }
 
 }
