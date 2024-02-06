@@ -10,6 +10,10 @@ import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.global.common.Rank;
 import uttugseuja.lucklotteryserver.global.database.BaseEntity;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -89,6 +93,18 @@ public class PensionLottery extends BaseEntity {
                 .createdDate(getCreatedDate())
                 .lastModifyDate(getLastModifyDate())
                 .build();
+    }
+
+    public List<Integer> getNumbers() {
+        List<Integer> numbers = new ArrayList<>();
+        numbers.add(getPensionGroup());
+        numbers.add(getPensionFirstNum());
+        numbers.add(getPensionSecondNum());
+        numbers.add(getPensionThirdNum());
+        numbers.add(getPensionFourthNum());
+        numbers.add(getPensionFifthNum());
+        numbers.add(getPensionSixthNum());
+        return numbers;
     }
 
 }
