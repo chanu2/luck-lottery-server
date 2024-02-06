@@ -12,6 +12,7 @@ public enum Rank {
     FOURTH(4),
     FIFTH(5),
     SIXTH(6),
+    SEVENTH(7),
     NONE(0);
 
     Integer winningRank;

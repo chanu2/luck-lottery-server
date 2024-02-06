@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 public class PensionLotteryBaseInfoVo {
 
     private final Long pensionLotteryId;
+    private Boolean checkWinningBonus;
     private final Integer pensionRound;
+    private final LocalDateTime winningDate;
     private final Integer pensionGroup;
     private final Integer pensionFirstNum;
     private final Integer pensionSecondNum;

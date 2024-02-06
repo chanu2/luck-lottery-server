@@ -7,8 +7,10 @@ import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.vo.WinningPensionLotteryBaseInfoVo;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -72,4 +74,51 @@ public class WinningPensionLottery {
         this.bonusFifthNum = bonusFifthNum;
         this.bonusSixthNum = bonusSixthNum;
     }
+
+    public WinningPensionLotteryBaseInfoVo getWinningPensionLotteryBaseInfoVo() {
+        return WinningPensionLotteryBaseInfoVo.builder()
+                .winningPensionLotteryId(id)
+                .round(round)
+                .lotteryDrawTime(lotteryDrawTime)
+                .lotteryGroup(lotteryGroup)
+                .winningFirstNum(winningFirstNum)
+                .winningSecondNum(winningSecondNum)
+                .winningThirdNum(winningThirdNum)
+                .winningFourthNum(winningFourthNum)
+                .winningFifthNum(winningFifthNum)
+                .winningSixthNum(winningSixthNum)
+                .bonusFirstNum(bonusFirstNum)
+                .bonusSecondNum(bonusSecondNum)
+                .bonusThirdNum(bonusThirdNum)
+                .bonusFourthNum(bonusFourthNum)
+                .bonusFifthNum(bonusFifthNum)
+                .bonusSixthNum(bonusSixthNum)
+                .build();
+    }
+
+    public List<Integer> getWinningNumbers() {
+
+        List<Integer> winningNumbers = new ArrayList<>();
+        winningNumbers.add(getLotteryGroup());
+        winningNumbers.add(getWinningFirstNum());
+        winningNumbers.add(getWinningSecondNum());
+        winningNumbers.add(getWinningThirdNum());
+        winningNumbers.add(getWinningFourthNum());
+        winningNumbers.add(getWinningFifthNum());
+        winningNumbers.add(getWinningSixthNum());
+        return winningNumbers;
+    }
+
+    public List<Integer> getWinningBonusNumbers() {
+
+        List<Integer> bonusNumbers = new ArrayList<>();
+        bonusNumbers.add(getBonusFirstNum());
+        bonusNumbers.add(getBonusSecondNum());
+        bonusNumbers.add(getBonusThirdNum());
+        bonusNumbers.add(getBonusFourthNum());
+        bonusNumbers.add(getBonusFifthNum());
+        bonusNumbers.add(getBonusSixthNum());
+        return bonusNumbers;
+    }
+
 }

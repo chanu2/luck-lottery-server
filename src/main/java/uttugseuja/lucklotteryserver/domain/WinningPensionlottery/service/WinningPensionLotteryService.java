@@ -1,6 +1,5 @@
 package uttugseuja.lucklotteryserver.domain.WinningPensionlottery.service;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
@@ -43,6 +42,12 @@ public class WinningPensionLotteryService {
     public WinningPensionLottery getRecentWinningPensionLottery() {
         return winningPensionLotteryRepository
                 .findFirstByOrderByRoundDesc()
+                .orElseThrow(()-> WinningPensionLotteryNotFoundException.EXCEPTION);
+    }
+
+    public WinningPensionLottery getRecentWinningPensionLotteryByRound(Integer round) {
+        return winningPensionLotteryRepository
+                .findByRound(round)
                 .orElseThrow(()-> WinningPensionLotteryNotFoundException.EXCEPTION);
     }
 
@@ -146,8 +151,6 @@ public class WinningPensionLotteryService {
         Integer drawRound = parsedData.get(0);
 
         return new LotteryDrawDayDto(drawRound,drawDay);
-
     }
-
 
 }
