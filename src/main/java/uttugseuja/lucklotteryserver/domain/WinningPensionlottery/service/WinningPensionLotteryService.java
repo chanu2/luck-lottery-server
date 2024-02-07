@@ -14,6 +14,7 @@ import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.reposito
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.repository.WinningPensionLotteryRepository;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.request.LotteryDrawDayDto;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.request.WinningPensionLotteryCrawlingDto;
+import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.response.WinningPensionLotteryResponse;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.CrawlingIOException;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.DataNotFoundException;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.PageAccessException;
@@ -38,6 +39,11 @@ public class WinningPensionLotteryService {
     private final static String  PRIZE_CSS_QUERY = "div.prize";
     private final static String  GROUP_CSS_QUERY = "h4 strong";
     private final static String  WiN_NUM_CSS_QUERY = "li";
+
+    public WinningPensionLotteryResponse recentWinningPensionLottery(){
+        WinningPensionLottery recentWinningPensionLottery = getRecentWinningPensionLottery();
+        return new WinningPensionLotteryResponse(recentWinningPensionLottery.getWinningPensionLotteryBaseInfoVo());
+    }
 
     public WinningPensionLottery getRecentWinningPensionLottery() {
         return winningPensionLotteryRepository
