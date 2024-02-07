@@ -136,6 +136,8 @@ public class CredentialService {
 
     public AuthTokensResponse tokenRefresh(String requestRefreshToken) {
 
+        log.info(requestRefreshToken);
+
         Optional<RefreshTokenRedisEntity> entityOptional =
                 refreshTokenRedisEntityRepository.findByRefreshToken(requestRefreshToken);
 
