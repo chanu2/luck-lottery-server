@@ -64,6 +64,18 @@ public class WinningLotteryService implements WinningLotteryUtils{
         return winningLottery.getWinningDate();
     }
 
+    @Transactional
+    public void updateWinningLottery() {
+        int recentRound = getRecentRound();
+
+        String winningLotteryInfo = winningLotteryClient.getWinningLotteryInfo(method, recentRound);
+        WinningLotteryDto deserialization = deserialization(winningLotteryInfo);
+
+        WinningLottery winningLottery = makeWinningLottery(deserialization);
+
+        winningLotteryRepository.save(winningLottery);
+    }
+
     public WinningLottery queryWinningLottery(Integer round) {
         return winningLotteryRepository
                 .findByRound(round)
