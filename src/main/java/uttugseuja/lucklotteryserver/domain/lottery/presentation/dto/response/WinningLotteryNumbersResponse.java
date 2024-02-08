@@ -1,7 +1,7 @@
 package uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response;
 
 import lombok.Getter;
-import uttugseuja.lucklotteryserver.global.api.dto.WinningLotteryDto;
+import uttugseuja.lucklotteryserver.domain.winning_lottery.domain.vo.WinningLotteryBaseInfoVo;
 
 @Getter
 public class WinningLotteryNumbersResponse {
@@ -20,13 +20,13 @@ public class WinningLotteryNumbersResponse {
 
     private Integer bonusNum;
 
-    public WinningLotteryNumbersResponse(WinningLotteryDto winningLotteryDto) {
-        this.firstNum = winningLotteryDto.getDrwtNo1();
-        this.secondNum = winningLotteryDto.getDrwtNo2();
-        this.thirdNum = winningLotteryDto.getDrwtNo3();
-        this.fourthNum = winningLotteryDto.getDrwtNo4();
-        this.fifthNum = winningLotteryDto.getDrwtNo5();
-        this.sixthNum = winningLotteryDto.getDrwtNo6();
-        this.bonusNum = winningLotteryDto.getBnusNo();
+    public WinningLotteryNumbersResponse(WinningLotteryBaseInfoVo winningLotteryBaseInfoVo) {
+        this.firstNum = winningLotteryBaseInfoVo.getFirstNum();
+        this.secondNum = winningLotteryBaseInfoVo.getSecondNum();
+        this.thirdNum = winningLotteryBaseInfoVo.getThirdNum();
+        this.fourthNum = winningLotteryBaseInfoVo.getFourthNum();
+        this.fifthNum = winningLotteryBaseInfoVo.getFifthNum();
+        this.sixthNum = winningLotteryBaseInfoVo.getSixthNum();
+        this.bonusNum = winningLotteryBaseInfoVo.getBonusNum();
     }
 }

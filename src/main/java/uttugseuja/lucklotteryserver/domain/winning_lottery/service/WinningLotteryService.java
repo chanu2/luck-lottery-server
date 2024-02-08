@@ -49,6 +49,7 @@ public class WinningLotteryService implements WinningLotteryUtils{
         return getWinningLotteryResponse(winningLottery);
     }
 
+    @Override
     public int getRecentRound() {
         LocalDateTime startDate = LocalDateTime.of(2002, 12, 7, 21, 0);
         LocalDateTime now = LocalDateTime.now();
@@ -58,12 +59,12 @@ public class WinningLotteryService implements WinningLotteryUtils{
         return days / 7 + 1;
     }
 
-    public LocalDate getWinningDate(Integer round) {
-        WinningLottery winningLottery = queryWinningLottery(round);
-
-        return winningLottery.getWinningDate();
+    @Override
+    public WinningLottery getWinningLottery(Integer round) {
+        return queryWinningLottery(round);
     }
 
+    @Override
     @Transactional
     public void updateWinningLottery() {
         int recentRound = getRecentRound();

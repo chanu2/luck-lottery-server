@@ -1,56 +1,55 @@
 package uttugseuja.lucklotteryserver.domain.lottery.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uttugseuja.lucklotteryserver.domain.lottery.domain.Lottery;
 import uttugseuja.lucklotteryserver.domain.lottery.domain.repository.LotteryRepository;
-import uttugseuja.lucklotteryserver.domain.lottery.exception.BadRoundException;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.request.CreateLotteryRequest;
+import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.OneRoundResponse;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.LotteryResponse;
-import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.LotteryNumbersResponse;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.RandomLotteryResponse;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.WinningLotteryNumbersResponse;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
+import uttugseuja.lucklotteryserver.domain.winning_lottery.domain.WinningLottery;
 import uttugseuja.lucklotteryserver.domain.winning_lottery.service.WinningLotteryUtils;
-import uttugseuja.lucklotteryserver.global.api.client.WinningLotteryClient;
-import uttugseuja.lucklotteryserver.global.api.dto.WinningLotteryDto;
 import uttugseuja.lucklotteryserver.global.common.Rank;
 import uttugseuja.lucklotteryserver.global.utils.user.UserUtils;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Slf4j
 public class LotteryService {
 
-    private final WinningLotteryClient winningLotteryClient;
     private final LotteryRepository lotteryRepository;
     private final UserUtils userUtils;
     private final WinningLotteryUtils winningLotteryUtils;
-    private static final String method = "getLottoNumber";
 
     public RandomLotteryResponse createRandomLottery() {
         List<Integer> randomNumbers = createRandomNumbers();
 
-        int recentRound = getRecentRound();
+        int recentRound = winningLotteryUtils.getRecentRound();
 
-        LocalDate winningDate = getRecentWinningDate(recentRound);
+        LocalDate winningDate = winningLotteryUtils.getWinningLottery(recentRound).getWinningDate();
 
         return new RandomLotteryResponse(randomNumbers, recentRound + 1, winningDate.plusDays(7));
     }
 
+    @Transactional
     public void saveLottery(CreateLotteryRequest createLotteryRequest) {
         int recentRound = winningLotteryUtils.getRecentRound();
-        LocalDate winningDate = winningLotteryUtils.getWinningDate(recentRound);
+        LocalDate winningDate = winningLotteryUtils.getWinningLottery(recentRound).getWinningDate();
 
         User user = userUtils.getUserFromSecurityContext();
 
@@ -60,53 +59,75 @@ public class LotteryService {
         lotteryRepository.save(lottery);
     }
 
-    public List<LotteryResponse> getLotteriesByUser() {
+    @Transactional
+    public Slice<OneRoundResponse> getLotteriesByUser(Pageable pageable) {
         User user = userUtils.getUserFromSecurityContext();
+
+        int recentRound = winningLotteryUtils.getRecentRound();
+
+        List<Lottery> lotteriesIsRankNull = lotteryRepository.findLotteriesByUserAndRound(user, recentRound);
+        updateLotteriesRank(lotteriesIsRankNull);
+
+        Slice<Integer> rounds = lotteryRepository.findRoundByUser(user, pageable);
         List<Lottery> lotteries = lotteryRepository.findByUser(user);
-        List<LotteryResponse> lotteryResponseList = new ArrayList<>();
+        HashMap<Integer, List<Lottery>> roundMap = makeHashMapByRound(lotteries);
 
-        for(Lottery lottery : lotteries) {
-            LotteryResponse lotteryResponse = processLottery(lottery);
-            lotteryResponseList.add(lotteryResponse);
-        }
-
-        return lotteryResponseList;
+        return rounds.map(lotteryRound -> processLottery(lotteryRound, recentRound, roundMap.get(lotteryRound)));
     }
 
-    private LotteryResponse processLottery(Lottery lottery) {
-        Integer lotteryRound = lottery.getRound();
-        int recentRound = getRecentRound();
+    private void updateLotteriesRank(List<Lottery> lotteriesIsRankNull) {
+        for(Lottery lottery : lotteriesIsRankNull) {
+            WinningLottery winningLottery = winningLotteryUtils.getWinningLottery(lottery.getRound());
 
+            List<Integer> correctNumbers = getCorrectNumbers(getLotteryNumbers(lottery),
+                    getWinningLotteryNumbers(winningLottery));
+
+            Rank rank = calLotteryRank(correctNumbers, winningLottery.getBonusNum());
+
+            lottery.updateRank(rank);
+        }
+    }
+
+    private HashMap<Integer, List<Lottery>> makeHashMapByRound(List<Lottery> lotteries) {
+        return lotteries.stream()
+                .collect(Collectors.groupingBy(Lottery::getRound, HashMap::new, Collectors.toList()));
+    }
+
+    private OneRoundResponse processLottery(Integer lotteryRound, Integer recentRound, List<Lottery> lotteries) {
         if(lotteryRound <= recentRound) {
-            WinningLotteryDto winningLottery = getWinningLottery(lotteryRound);
-            List<Integer> lotteryNumbers = getLotteryNumbers(lottery);
-            List<Integer> winningLotteryNumbers = getWinningLotteryNumbers(winningLottery);
-            List<Integer> correctNumbers = getCorrectNumbers(lotteryNumbers, winningLotteryNumbers);
+            WinningLottery winningLottery = winningLotteryUtils.getWinningLottery(lotteryRound);
 
-            if(lottery.getRank() == null) {
-                boolean hasBonusNumber = checkBonusNumber(correctNumbers, winningLottery.getBnusNo());
-                Rank rank = calLotteryRank(correctNumbers, hasBonusNumber);
-                lottery.updateRank(rank);
-            }
+            List<LotteryResponse> lotteryResponses = makeLotteryResponsesNotRecent(lotteries, winningLottery);
 
-            return getLotteryResponse(lottery, winningLottery, correctNumbers);
+            WinningLotteryNumbersResponse winningLotteryNumbersResponse =
+                    new WinningLotteryNumbersResponse(winningLottery.getWinningLotteryBaseInfoVo());
+
+            return new OneRoundResponse(lotteryRound, winningLottery.getWinningDate(),
+                    lotteryResponses, winningLotteryNumbersResponse);
         } else {
-            return getLotteryResponse(lottery, null, null);
+            LocalDate winningDate =
+                    winningLotteryUtils.getWinningLottery(recentRound).getWinningDate().plusDays(7);
+
+            List<LotteryResponse> lotteryResponses = makeLotteryResponseRecent(lotteries);
+            return new OneRoundResponse(lotteryRound, winningDate, lotteryResponses, null);
         }
     }
 
-    private WinningLotteryDto getWinningLottery(Integer round) {
-        String json = winningLotteryClient.getWinningLotteryInfo(method, round);
-        return deserialization(json);
+    private List<LotteryResponse> makeLotteryResponsesNotRecent(List<Lottery> lotteries,
+                                                                WinningLottery winningLottery) {
+        return lotteries.stream()
+                .map(lottery -> {
+                    List<Integer> correctNumbers = getCorrectNumbers(getLotteryNumbers(lottery),
+                            getWinningLotteryNumbers(winningLottery));
+                    return new LotteryResponse(lottery.getLotteryBaseInfoVo(), correctNumbers);
+                })
+                .collect(Collectors.toList());
     }
 
-    private WinningLotteryDto deserialization(String json) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try{
-            return objectMapper.readValue(json, WinningLotteryDto.class);
-        } catch (JsonProcessingException e) {
-            throw BadRoundException.EXCEPTION;
-        }
+    private List<LotteryResponse> makeLotteryResponseRecent(List<Lottery> lotteries) {
+        return lotteries.stream()
+                .map(lottery -> new LotteryResponse(lottery.getLotteryBaseInfoVo(), null))
+                .collect(Collectors.toList());
     }
 
     private List<Integer> createRandomNumbers() {
@@ -124,24 +145,6 @@ public class LotteryService {
         return numbers;
     }
 
-    private int getRecentRound() {
-        LocalDateTime startDate = LocalDateTime.of(2002, 12, 7, 20, 0);
-        LocalDateTime now = LocalDateTime.now();
-
-        int days = (int) ChronoUnit.DAYS.between(startDate, now);
-
-        return days / 7 + 1;
-    }
-
-    private LocalDate getRecentWinningDate(int recentRound) {
-        WinningLotteryDto winningLottery = getWinningLottery(recentRound);
-        return convertStringToLocalDate(winningLottery.getDrwNoDate());
-    }
-
-    private LocalDate convertStringToLocalDate(String winningDate) {
-        return LocalDate.parse(winningDate);
-    }
-
     private Lottery makeLottery(User user, int recentRound, LocalDate winningDate,
                                 CreateLotteryRequest createLotteryRequest) {
         return Lottery.builder()
@@ -157,25 +160,11 @@ public class LotteryService {
                 .build();
     }
 
-    private LotteryResponse getLotteryResponse(Lottery lottery,
-                                               WinningLotteryDto winningLotteryDto,
-                                               List<Integer> correctNumbers) {
-        LotteryNumbersResponse lotteryNumbersResponse = new LotteryNumbersResponse(lottery.getLotteryBaseInfoVo());
-        WinningLotteryNumbersResponse winningLotteryNumbersResponse;
-        if(winningLotteryDto == null) {
-            winningLotteryNumbersResponse = null;
-            correctNumbers = null;
-        } else {
-            winningLotteryNumbersResponse = new WinningLotteryNumbersResponse(winningLotteryDto);
-        }
-        return new LotteryResponse(lotteryNumbersResponse, winningLotteryNumbersResponse,
-                correctNumbers, lottery.getLotteryBaseInfoVo());
-    }
-
-    private Rank calLotteryRank(List<Integer> correctNumbers, boolean hasBonusNumber) {
+    private Rank calLotteryRank(List<Integer> correctNumbers, Integer bonusNumber) {
         int correctSize = correctNumbers.size();
+
         if(correctSize == 6) {
-            if(hasBonusNumber) {
+            if(correctNumbers.contains(bonusNumber)) {
                 return Rank.SECOND;
             } else {
                 return Rank.FIRST;
@@ -213,23 +202,16 @@ public class LotteryService {
         }};
     }
 
-    private List<Integer> getWinningLotteryNumbers(WinningLotteryDto winningLottery) {
+    private List<Integer> getWinningLotteryNumbers(WinningLottery winningLottery) {
         return new ArrayList<>(){{
-            add(winningLottery.getDrwtNo1());
-            add(winningLottery.getDrwtNo2());
-            add(winningLottery.getDrwtNo3());
-            add(winningLottery.getDrwtNo4());
-            add(winningLottery.getDrwtNo5());
-            add(winningLottery.getDrwtNo6());
-            add(winningLottery.getBnusNo());
+            add(winningLottery.getFirstNum());
+            add(winningLottery.getSecondNum());
+            add(winningLottery.getThirdNum());
+            add(winningLottery.getFourthNum());
+            add(winningLottery.getFifthNum());
+            add(winningLottery.getSixthNum());
+            add(winningLottery.getBonusNum());
         }};
-    }
-
-    private boolean checkBonusNumber(List<Integer> correctNumbers, Integer bonusNumber) {
-        if(correctNumbers.contains(bonusNumber)) {
-            return true;
-        }
-        return false;
     }
 
 }
