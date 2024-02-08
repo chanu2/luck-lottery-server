@@ -1,37 +1,38 @@
 package uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Getter;
 import uttugseuja.lucklotteryserver.domain.lottery.domain.vo.LotteryBaseInfoVo;
 import uttugseuja.lucklotteryserver.global.common.Rank;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 public class LotteryResponse {
 
-    private Integer round;
+    private Integer firstNum;
 
-    private LocalDate winningDate;
+    private Integer secondNum;
 
-    private LotteryNumbersResponse lotteryNumbersResponse;
+    private Integer thirdNum;
 
-    private WinningLotteryNumbersResponse winningLotteryNumbersResponse;
+    private Integer fourthNum;
 
-    private List<Integer> correctNumbers;
+    private Integer fifthNum;
+
+    private Integer sixthNum;
 
     private Rank rank;
 
-    public LotteryResponse(LotteryNumbersResponse lotteryNumbersResponse,
-                           WinningLotteryNumbersResponse winningLotteryNumbersResponse,
-                           List<Integer> correctNumbers,
-                           LotteryBaseInfoVo lotteryBaseInfoVo) {
-        this.round = lotteryBaseInfoVo.getRound();
-        this.winningDate = lotteryBaseInfoVo.getWinningDate();
-        this.lotteryNumbersResponse = lotteryNumbersResponse;
-        this.winningLotteryNumbersResponse = winningLotteryNumbersResponse;
-        this.correctNumbers = correctNumbers;
+    private List<Integer> correctNumbers;
+
+    public LotteryResponse(LotteryBaseInfoVo lotteryBaseInfoVo, List<Integer> correctNumbers) {
+        this.firstNum = lotteryBaseInfoVo.getFirstNum();
+        this.secondNum = lotteryBaseInfoVo.getSecondNum();
+        this.thirdNum = lotteryBaseInfoVo.getThirdNum();
+        this.fourthNum = lotteryBaseInfoVo.getFourthNum();
+        this.fifthNum = lotteryBaseInfoVo.getFifthNum();
+        this.sixthNum = lotteryBaseInfoVo.getSixthNum();
         this.rank = lotteryBaseInfoVo.getRank();
+        this.correctNumbers = correctNumbers;
     }
 }
