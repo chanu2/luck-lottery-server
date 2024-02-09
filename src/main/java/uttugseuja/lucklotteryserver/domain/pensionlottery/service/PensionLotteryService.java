@@ -30,6 +30,11 @@ public class PensionLotteryService {
     private final WinningPensionLotteryService winningPensionLotteryService;
     private final PensionLotteryRepository pensionLotteryRepository;
 
+    private HashMap<Integer, List<PensionLottery>> makeHashMapByPensionRound(List<PensionLottery> pensionLotteries) {
+        return pensionLotteries.stream()
+                .collect(Collectors.groupingBy(PensionLottery::getPensionRound, HashMap::new, Collectors.toList()));
+    }
+
     private List<PensionLotteryNumbersResponse> makePreviousPensionLotteryNumbers(List<PensionLottery> pensionLotteries,
                                                                                   WinningPensionLottery winningPensionLottery) {
         return pensionLotteries.stream()
