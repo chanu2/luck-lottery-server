@@ -19,6 +19,7 @@ import uttugseuja.lucklotteryserver.global.utils.user.UserUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,17 @@ public class PensionLotteryService {
     private final UserUtils userUtils;
     private final WinningPensionLotteryService winningPensionLotteryService;
     private final PensionLotteryRepository pensionLotteryRepository;
+
+    private List<PensionLotteryNumbersResponse> makePreviousPensionLotteryNumbers(List<PensionLottery> pensionLotteries,
+                                                                                  WinningPensionLottery winningPensionLottery) {
+        return pensionLotteries.stream()
+                .map(pensionLottery -> {
+                    List<Boolean> correctNumbers = checkCorrectNumbers(pensionLottery, winningPensionLottery);
+                    List<Boolean> correctBonusNumbers = checkBonusCorrectNumbers(pensionLottery, winningPensionLottery);
+                    return new PensionLotteryNumbersResponse(pensionLottery.getPensionLotteryBaseInfoVo(), correctNumbers,correctBonusNumbers);
+                })
+                .collect(Collectors.toList());
+    }
 
     private void updatePensionLottery(PensionLottery pensionLottery) {
 
