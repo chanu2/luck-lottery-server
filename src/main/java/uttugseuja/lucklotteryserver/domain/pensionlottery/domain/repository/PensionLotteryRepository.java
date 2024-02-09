@@ -19,4 +19,7 @@ public interface PensionLotteryRepository extends JpaRepository<PensionLottery, 
     @Query("select distinct p.pensionRound from PensionLottery p where p.user = :user order by p.pensionRound desc")
     Slice<Integer> findRoundByUser(User user, Pageable pageable);
 
+    @Query("SELECT p FROM PensionLottery p WHERE p.user = :user AND p.pensionRound IN :rounds")
+    List<PensionLottery> findPensionLotteryByRounds(@Param("user") User user, @Param("rounds") List<Integer> rounds);
+
 }
