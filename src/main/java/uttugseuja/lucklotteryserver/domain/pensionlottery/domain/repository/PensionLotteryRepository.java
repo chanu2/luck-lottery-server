@@ -16,4 +16,7 @@ public interface PensionLotteryRepository extends JpaRepository<PensionLottery, 
     @Query("select p from PensionLottery p where p.user = :user and p.rank is null and p.pensionRound <= :pensionRound")
     List<PensionLottery> drawnPensionLottery(User user, Integer pensionRound);
 
+    @Query("select distinct p.pensionRound from PensionLottery p where p.user = :user order by p.pensionRound desc")
+    Slice<Integer> findRoundByUser(User user, Pageable pageable);
+
 }
