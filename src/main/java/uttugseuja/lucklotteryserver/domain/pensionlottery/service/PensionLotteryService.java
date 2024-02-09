@@ -207,11 +207,6 @@ public class PensionLotteryService {
     public void savePensionLottery(CreatePensionLotteryRequest createPensionLotteryRequest) {
         User user = userUtils.getUserFromSecurityContext();
         WinningPensionLottery winningPensionLottery = winningPensionLotteryService.getRecentWinningPensionLottery();
-
-//        if(createPensionLotteryRequest.getPensionRound() > winningPensionLottery.getRound()+1){
-//            throw OverRoundException.EXCEPTION;
-//        }
-
         PensionLottery pensionLottery = makePensionLottery(createPensionLotteryRequest, user, winningPensionLottery);
         pensionLotteryRepository.save(pensionLottery);
     }
@@ -236,7 +231,7 @@ public class PensionLotteryService {
                 .user(user)
                 .winningDate(winningPensionLottery.getLotteryDrawTime().plusDays(7))
                 .checkWinningBonus(false)
-                .pensionRound(createPensionLotteryRequest.getPensionRound())
+                .pensionRound(winningPensionLottery.getRound()+1)
                 .pensionGroup(createPensionLotteryRequest.getPensionGroup())
                 .pensionFirstNum(createPensionLotteryRequest.getPensionFirstNum())
                 .pensionSecondNum(createPensionLotteryRequest.getPensionSecondNum())
