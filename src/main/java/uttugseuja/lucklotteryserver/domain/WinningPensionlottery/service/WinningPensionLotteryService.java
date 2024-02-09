@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class WinningPensionLotteryService {
+public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
 
     private final WinningPensionLotteryJdbcRepository winningPensionLotteryJdbcRepository;
     private final WinningPensionLotteryRepository winningPensionLotteryRepository;
@@ -45,12 +45,14 @@ public class WinningPensionLotteryService {
         return new WinningPensionLotteryResponse(recentWinningPensionLottery.getWinningPensionLotteryBaseInfoVo());
     }
 
+    @Override
     public WinningPensionLottery getRecentWinningPensionLottery() {
         return winningPensionLotteryRepository
                 .findFirstByOrderByRoundDesc()
                 .orElseThrow(()-> WinningPensionLotteryNotFoundException.EXCEPTION);
     }
 
+    @Override
     public WinningPensionLottery getRecentWinningPensionLotteryByRound(Integer round) {
         return winningPensionLotteryRepository
                 .findByRound(round)
