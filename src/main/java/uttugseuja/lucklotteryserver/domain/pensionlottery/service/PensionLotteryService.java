@@ -41,6 +41,12 @@ public class PensionLotteryService {
                 .collect(Collectors.toList());
     }
 
+    private List<PensionLotteryNumbersResponse> makeRecentPensionLotteryNumbers(List<PensionLottery> pensionLotteries) {
+        return pensionLotteries.stream()
+                .map(pensionLottery -> new PensionLotteryNumbersResponse(pensionLottery.getPensionLotteryBaseInfoVo(), null, null))
+                .collect(Collectors.toList());
+    }
+
     private void updatePensionLottery(PensionLottery pensionLottery) {
 
             WinningPensionLottery winningPensionLottery = winningPensionLotteryService.getRecentWinningPensionLotteryByRound(pensionLottery.getPensionRound());
