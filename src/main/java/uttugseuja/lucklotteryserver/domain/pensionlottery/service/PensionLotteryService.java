@@ -30,6 +30,27 @@ public class PensionLotteryService {
     private final WinningPensionLotteryService winningPensionLotteryService;
     private final PensionLotteryRepository pensionLotteryRepository;
 
+    private PensionLotteryResponse makePensionResponse(Integer round, List<PensionLottery> pensionLotteries) {
+
+        WinningPensionLottery recentWinningPensionLottery = winningPensionLotteryService.getRecentWinningPensionLottery();
+        Integer pensionRound = recentWinningPensionLottery.getRound();
+
+        if(round <= pensionRound){
+            WinningPensionLottery winningPensionLottery = winningPensionLotteryService.getRecentWinningPensionLotteryByRound(round);
+            List<PensionLotteryNumbersResponse> pensionLotteryNumbersResponses = makePreviousPensionLotteryNumbers(pensionLotteries, winningPensionLottery);
+
+            return getPensionLotteryResponse(round,
+                    winningPensionLottery.getLotteryDrawTime(),
+                    winningPensionLottery,
+                    pensionLotteryNumbersResponses);
+        }
+        List<PensionLotteryNumbersResponse> pensionLotteryNumbersResponses = makeRecentPensionLotteryNumbers(pensionLotteries);
+
+        return getPensionLotteryEmptyResponse(pensionRound+1,
+                recentWinningPensionLottery.getLotteryDrawTime().plusDays(7),
+                pensionLotteryNumbersResponses);
+    }
+
     private HashMap<Integer, List<PensionLottery>> makeHashMapByPensionRound(List<PensionLottery> pensionLotteries) {
         return pensionLotteries.stream()
                 .collect(Collectors.groupingBy(PensionLottery::getPensionRound, HashMap::new, Collectors.toList()));
