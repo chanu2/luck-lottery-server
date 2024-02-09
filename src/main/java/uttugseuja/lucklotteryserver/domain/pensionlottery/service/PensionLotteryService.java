@@ -4,14 +4,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.WinningPensionLottery;
+import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.response.WinningPensionLotteryBonusNumbersResponse;
+import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.response.WinningPensionLotteryNumbersResponse;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.service.WinningPensionLotteryService;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.domain.PensionLottery;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.domain.repository.PensionLotteryRepository;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.request.CreatePensionLotteryRequest;
+import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.response.PensionLotteryNumbersResponse;
+import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.response.PensionLotteryResponse;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.response.RandomPensionLotteryResponse;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.global.common.Rank;
 import uttugseuja.lucklotteryserver.global.utils.user.UserUtils;
+
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -37,7 +43,35 @@ public class PensionLotteryService {
             updateCorrectBonus(correctBonusCount,pensionLottery);
     }
 
+    private PensionLotteryResponse getPensionLotteryResponse(Integer round,
+                                                             LocalDateTime winningDate,
+                                                             WinningPensionLottery winningPensionLottery,
+                                                             List<PensionLotteryNumbersResponse> pensionLotteryNumbersResponseList) {
 
+        WinningPensionLotteryNumbersResponse winningPensionNumbersResponse = new WinningPensionLotteryNumbersResponse(winningPensionLottery.getWinningPensionLotteryBaseInfoVo());
+        WinningPensionLotteryBonusNumbersResponse winningPensionLotteryBonusNumbersResponse = new WinningPensionLotteryBonusNumbersResponse(winningPensionLottery.getWinningPensionLotteryBaseInfoVo());
+
+        return new PensionLotteryResponse(
+                round,
+                winningDate,
+                pensionLotteryNumbersResponseList,
+                winningPensionNumbersResponse,
+                winningPensionLotteryBonusNumbersResponse
+        );
+    }
+
+    private PensionLotteryResponse getPensionLotteryEmptyResponse(Integer round,
+                                                                  LocalDateTime winningDate,
+                                                                  List<PensionLotteryNumbersResponse> pensionLotteryNumbersResponseList) {
+
+        return new PensionLotteryResponse(
+                round,
+                winningDate,
+                pensionLotteryNumbersResponseList,
+                null,
+                null
+        );
+    }
 
     private Rank getPensionLotteryResult(Integer count){
 
