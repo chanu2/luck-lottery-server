@@ -2,7 +2,10 @@ package uttugseuja.lucklotteryserver.domain.pensionlottery.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.WinningPensionLottery;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.response.WinningPensionLotteryBonusNumbersResponse;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.response.WinningPensionLotteryNumbersResponse;
@@ -29,6 +32,23 @@ public class PensionLotteryService {
     private final UserUtils userUtils;
     private final WinningPensionLotteryService winningPensionLotteryService;
     private final PensionLotteryRepository pensionLotteryRepository;
+
+    @Transactional
+    public Slice<PensionLotteryResponse> getPensionLottery(Pageable pageable){
+
+        User user = userUtils.getUserFromSecurityContext();
+        Integer round = winningPensionLotteryService.getRecentWinningPensionLottery().getRound();
+        List<PensionLottery> drawnPensionLottery = pensionLotteryRepository.drawnPensionLottery(user,round);
+
+        drawnPensionLottery.forEach(this::updatePensionLottery);
+
+        Slice<Integer> pensionRound = pensionLotteryRepository.findRoundByUser(user, pageable);
+        List<Integer> rounds = pensionRound.getContent();
+        List<PensionLottery> pensionLotteries = pensionLotteryRepository.findPensionLotteryByRounds(user, rounds);
+
+        Map<Integer, List<PensionLottery>> hashMapByRounds = makeHashMapByPensionRound(pensionLotteries);
+        return pensionRound.map(lotteryRound -> makePensionResponse(lotteryRound,hashMapByRounds.get(lotteryRound)));
+    }
 
     private PensionLotteryResponse makePensionResponse(Integer round, List<PensionLottery> pensionLotteries) {
 
