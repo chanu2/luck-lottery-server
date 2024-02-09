@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreatePensionLotteryRequest {
 
-    private Integer pensionRound;
     private Integer pensionGroup;
     private Integer pensionFirstNum;
     private Integer pensionSecondNum;
