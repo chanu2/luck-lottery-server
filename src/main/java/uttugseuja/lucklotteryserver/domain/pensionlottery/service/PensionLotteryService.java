@@ -1,19 +1,15 @@
 package uttugseuja.lucklotteryserver.domain.pensionlottery.service;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.security.SecurityUtil;
-import org.hibernate.annotations.Check;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.WinningPensionLottery;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.response.WinningPensionLotteryBonusNumbersResponse;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.response.WinningPensionLotteryNumbersResponse;
-import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.service.WinningPensionLotteryService;
+import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.service.WinningPensionLotteryUtils;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.domain.PensionLottery;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.domain.repository.PensionLotteryRepository;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.request.CreatePensionLotteryRequest;
@@ -22,13 +18,9 @@ import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.respo
 import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.response.RandomPensionLotteryResponse;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.global.common.Rank;
-import uttugseuja.lucklotteryserver.global.utils.security.SecurityUtils;
 import uttugseuja.lucklotteryserver.global.utils.user.UserUtils;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,73 +29,108 @@ import java.util.stream.Collectors;
 public class PensionLotteryService {
 
     private final UserUtils userUtils;
-    private final WinningPensionLotteryService winningPensionLotteryService;
+    private final WinningPensionLotteryUtils winningPensionLotteryUtils;
     private final PensionLotteryRepository pensionLotteryRepository;
 
     @Transactional
     public Slice<PensionLotteryResponse> getPensionLottery(Pageable pageable){
 
-        Long currentUserId = SecurityUtils.getCurrentUserId();
-        Slice<PensionLottery> pensionLotteries = pensionLotteryRepository.findByUserId(currentUserId, pageable);
+        User user = userUtils.getUserFromSecurityContext();
+        Integer round = winningPensionLotteryUtils.getRecentWinningPensionLottery().getRound();
+        List<PensionLottery> drawnPensionLottery = pensionLotteryRepository.drawnPensionLottery(user,round);
 
-        List<PensionLotteryResponse> pensionLotteryResponses = pensionLotteries.stream()
-                .map(this::updatePensionLottery)
-                .collect(Collectors.toList());
+        drawnPensionLottery.forEach(this::updatePensionLottery);
 
-        return new SliceImpl<>(pensionLotteryResponses, pageable, pensionLotteries.hasNext());
+        Slice<Integer> pensionRound = pensionLotteryRepository.findRoundByUser(user, pageable);
+        List<Integer> rounds = pensionRound.getContent();
+        List<PensionLottery> pensionLotteries = pensionLotteryRepository.findPensionLotteryByRounds(user, rounds);
+
+        Map<Integer, List<PensionLottery>> hashMapByRounds = makeHashMapByPensionRound(pensionLotteries);
+        return pensionRound.map(lotteryRound -> makePensionResponse(lotteryRound,hashMapByRounds.get(lotteryRound)));
     }
 
-    private PensionLotteryResponse updatePensionLottery(PensionLottery pensionLottery) {
+    private PensionLotteryResponse makePensionResponse(Integer round, List<PensionLottery> pensionLotteries) {
 
-        WinningPensionLottery recentWinningPensionLottery = winningPensionLotteryService.getRecentWinningPensionLottery();
-        Integer recentRound = recentWinningPensionLottery.getRound();
+        WinningPensionLottery recentWinningPensionLottery = winningPensionLotteryUtils.getRecentWinningPensionLottery();
+        Integer pensionRound = recentWinningPensionLottery.getRound();
 
-        if(pensionLottery.getPensionRound() <= recentRound) {
-            WinningPensionLottery winningPensionLottery = winningPensionLotteryService.getRecentWinningPensionLotteryByRound(pensionLottery.getPensionRound());
+        if(round <= pensionRound){
+            WinningPensionLottery winningPensionLottery = winningPensionLotteryUtils.getRecentWinningPensionLotteryByRound(round);
+            List<PensionLotteryNumbersResponse> pensionLotteryNumbersResponses = makePreviousPensionLotteryNumbers(pensionLotteries, winningPensionLottery);
+
+            return getPensionLotteryResponse(round,
+                    winningPensionLottery.getLotteryDrawTime(),
+                    winningPensionLottery,
+                    pensionLotteryNumbersResponses);
+        }
+        List<PensionLotteryNumbersResponse> pensionLotteryNumbersResponses = makeRecentPensionLotteryNumbers(pensionLotteries);
+
+        return getPensionLotteryEmptyResponse(pensionRound+1,
+                recentWinningPensionLottery.getLotteryDrawTime().plusDays(7),
+                pensionLotteryNumbersResponses);
+    }
+
+    private HashMap<Integer, List<PensionLottery>> makeHashMapByPensionRound(List<PensionLottery> pensionLotteries) {
+        return pensionLotteries.stream()
+                .collect(Collectors.groupingBy(PensionLottery::getPensionRound, HashMap::new, Collectors.toList()));
+    }
+
+    private List<PensionLotteryNumbersResponse> makePreviousPensionLotteryNumbers(List<PensionLottery> pensionLotteries,
+                                                                                  WinningPensionLottery winningPensionLottery) {
+        return pensionLotteries.stream()
+                .map(pensionLottery -> {
+                    List<Boolean> correctNumbers = checkCorrectNumbers(pensionLottery, winningPensionLottery);
+                    List<Boolean> correctBonusNumbers = checkBonusCorrectNumbers(pensionLottery, winningPensionLottery);
+                    return new PensionLotteryNumbersResponse(pensionLottery.getPensionLotteryBaseInfoVo(), correctNumbers,correctBonusNumbers);
+                })
+                .collect(Collectors.toList());
+    }
+
+    private List<PensionLotteryNumbersResponse> makeRecentPensionLotteryNumbers(List<PensionLottery> pensionLotteries) {
+        return pensionLotteries.stream()
+                .map(pensionLottery -> new PensionLotteryNumbersResponse(pensionLottery.getPensionLotteryBaseInfoVo(), null, null))
+                .collect(Collectors.toList());
+    }
+
+    private void updatePensionLottery(PensionLottery pensionLottery) {
+
+            WinningPensionLottery winningPensionLottery = winningPensionLotteryUtils.getRecentWinningPensionLotteryByRound(pensionLottery.getPensionRound());
             List<Boolean> checkCorrectNumbers = checkCorrectNumbers(pensionLottery, winningPensionLottery);
             List<Boolean> checkBonusCorrectNumbers = checkBonusCorrectNumbers(pensionLottery, winningPensionLottery);
 
-            if(pensionLottery.getRank() == null) {
-                Integer integer = calculateCorrectNumbers(checkCorrectNumbers);
-                Rank pensionLotteryResult = getPensionLotteryResult(integer);
-                pensionLottery.updateRank(pensionLotteryResult);
-                Integer correctBonusCount = calculateCorrectNumbers(checkBonusCorrectNumbers);
-                updateCorrectBonus(correctBonusCount,pensionLottery);
-            }
-            return getPensionLotteryResponse(pensionLottery, winningPensionLottery,checkCorrectNumbers,checkBonusCorrectNumbers);
+            Integer correctCount = calculateCorrectNumbers(checkCorrectNumbers);
+            Rank pensionLotteryResult = getPensionLotteryResult(correctCount);
+            pensionLottery.updateRank(pensionLotteryResult);
 
-        }
-        return getPensionLotteryEmptyResponse(pensionLottery);
+            Integer correctBonusCount = calculateCorrectNumbers(checkBonusCorrectNumbers);
+            updateCorrectBonus(correctBonusCount,pensionLottery);
     }
 
-    private PensionLotteryResponse getPensionLotteryResponse(PensionLottery pensionLottery,
+    private PensionLotteryResponse getPensionLotteryResponse(Integer round,
+                                                             LocalDateTime winningDate,
                                                              WinningPensionLottery winningPensionLottery,
-                                                             List<Boolean> correctNumbers,
-                                                             List<Boolean> bonusCorrectNumbers) {
+                                                             List<PensionLotteryNumbersResponse> pensionLotteryNumbersResponseList) {
 
-        PensionLotteryNumbersResponse pensionNumbersResponse = new PensionLotteryNumbersResponse(pensionLottery.getPensionLotteryBaseInfoVo());
         WinningPensionLotteryNumbersResponse winningPensionNumbersResponse = new WinningPensionLotteryNumbersResponse(winningPensionLottery.getWinningPensionLotteryBaseInfoVo());
         WinningPensionLotteryBonusNumbersResponse winningPensionLotteryBonusNumbersResponse = new WinningPensionLotteryBonusNumbersResponse(winningPensionLottery.getWinningPensionLotteryBaseInfoVo());
 
         return new PensionLotteryResponse(
-                pensionNumbersResponse,
+                round,
+                winningDate,
+                pensionLotteryNumbersResponseList,
                 winningPensionNumbersResponse,
-                winningPensionLotteryBonusNumbersResponse,
-                pensionLottery.getPensionLotteryBaseInfoVo(),
-                correctNumbers,
-                bonusCorrectNumbers
+                winningPensionLotteryBonusNumbersResponse
         );
     }
 
-    private PensionLotteryResponse getPensionLotteryEmptyResponse(PensionLottery pensionLottery) {
-
-        PensionLotteryNumbersResponse pensionNumbersResponse = new PensionLotteryNumbersResponse(pensionLottery.getPensionLotteryBaseInfoVo());
+    private PensionLotteryResponse getPensionLotteryEmptyResponse(Integer round,
+                                                                  LocalDateTime winningDate,
+                                                                  List<PensionLotteryNumbersResponse> pensionLotteryNumbersResponseList) {
 
         return new PensionLotteryResponse(
-                pensionNumbersResponse,
-                null,
-                null,
-                pensionLottery.getPensionLotteryBaseInfoVo(),
+                round,
+                winningDate,
+                pensionLotteryNumbersResponseList,
                 null,
                 null
         );
@@ -171,19 +198,14 @@ public class PensionLotteryService {
 
     public RandomPensionLotteryResponse createRandomPensionLottery() {
         List<Integer> numbers = createRandomPensionNumbers();
-        WinningPensionLottery winningPensionLottery = winningPensionLotteryService.getRecentWinningPensionLottery();
+        WinningPensionLottery winningPensionLottery = winningPensionLotteryUtils.getRecentWinningPensionLottery();
         Integer randomRound = winningPensionLottery.getRound() + 1;
         return new RandomPensionLotteryResponse(numbers,randomRound);
     }
 
     public void savePensionLottery(CreatePensionLotteryRequest createPensionLotteryRequest) {
         User user = userUtils.getUserFromSecurityContext();
-        WinningPensionLottery winningPensionLottery = winningPensionLotteryService.getRecentWinningPensionLottery();
-
-//        if(createPensionLotteryRequest.getPensionRound() > winningPensionLottery.getRound()+1){
-//            throw OverRoundException.EXCEPTION;
-//        }
-
+        WinningPensionLottery winningPensionLottery = winningPensionLotteryUtils.getRecentWinningPensionLottery();
         PensionLottery pensionLottery = makePensionLottery(createPensionLotteryRequest, user, winningPensionLottery);
         pensionLotteryRepository.save(pensionLottery);
     }
@@ -208,7 +230,7 @@ public class PensionLotteryService {
                 .user(user)
                 .winningDate(winningPensionLottery.getLotteryDrawTime().plusDays(7))
                 .checkWinningBonus(false)
-                .pensionRound(createPensionLotteryRequest.getPensionRound())
+                .pensionRound(winningPensionLottery.getRound()+1)
                 .pensionGroup(createPensionLotteryRequest.getPensionGroup())
                 .pensionFirstNum(createPensionLotteryRequest.getPensionFirstNum())
                 .pensionSecondNum(createPensionLotteryRequest.getPensionSecondNum())
