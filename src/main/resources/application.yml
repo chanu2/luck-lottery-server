@@ -18,6 +18,11 @@ spring:
       hibernate:
         format_sql: true
 
+  servlet:
+    multipart:
+      maxFileSize: 10MB
+      maxRequestSize: 10MB
+
 logging.level:
   org.hibernate.SQL: debug
 
@@ -37,6 +42,13 @@ auth:
     refreshExp: ${JWT_REFRESH_EXP}
     header: ${JWT_HEADER}
     prefix: ${JWT_PREFIX}
+
+aws:
+  access-key: ${AWS_ACCESS_KEY}
+  secret-key: ${AWS_SECRET_KEY}
+  s3:
+    bucket: ${AWS_S3_BUCKET}
+    base-url: ${AWS_S3_BASE_URL}
 
 springdoc:
   default-consumes-media-type: application/json;charset=UTF-8

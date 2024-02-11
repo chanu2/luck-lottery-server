@@ -58,6 +58,9 @@ dependencies {
 
 	//swagger
 	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.3.0'
+
+	//S3
+	implementation 'com.amazonaws:aws-java-sdk-s3control:1.12.364'
 }
 
 dependencyManagement {

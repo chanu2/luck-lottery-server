@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import uttugseuja.lucklotteryserver.domain.user.domain.vo.UserInfoVO;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -46,5 +47,18 @@ public class User {
         this.email = email;
         this.profilePath = profilePath;
     }
-    
+
+    public UserInfoVO getUserInfo() {
+        return UserInfoVO.builder()
+                .userId(id)
+                .nickname(nickname)
+                .email(email)
+                .profilePath(profilePath)
+                .build();
+    }
+
+    public void updateProfilePath(String profilePath){
+        this.profilePath = profilePath;
+    }
+
 }
