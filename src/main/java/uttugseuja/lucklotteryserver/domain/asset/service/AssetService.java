@@ -22,10 +22,9 @@ public class AssetService implements AssetUtils{
         return new ProfileImageDto(randomProfileImage);
     }
 
+
     @Override
-    public Boolean checkIsBasicProfile(String profileUrl) {
-        return null;
+    public Boolean checkIsBasicProfile(String profileUrl){
+        return profileImageRepository.existsByImageUrl(profileUrl);
     }
-
-
 }
