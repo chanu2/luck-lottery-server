@@ -10,4 +10,5 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
     @Query(value = "SELECT * FROM tbl_profile_image order by RAND() limit 1", nativeQuery = true)
     Optional<ProfileImage> findRandomProfileImage();
 
+    Boolean existsByImageUrl(String profileUrl);
 }
