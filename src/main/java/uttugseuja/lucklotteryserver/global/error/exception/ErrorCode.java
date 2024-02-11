@@ -25,6 +25,7 @@ public enum ErrorCode {
     FILE_EMPTY(404,  "FILE empty"),
     FILE_UPLOAD_FAIL(404,  "FILE upload fail"),
     FILE_OVER_SIZE(404,  "FILE 크기가 10mb를 초과 하였습니다"),
+    PROFILE_IMAGE_NOT_FOUND(404,  "프로필 이미지를 찾을 수 없습니다"),
 
     /* 500 */
     INTERNAL_SERVER_ERROR(500,"서버 에러"),
