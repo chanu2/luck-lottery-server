@@ -23,6 +23,7 @@ public enum ErrorCode {
     WINNING_LOTTERY_NOT_FOUND(404, "해당 회차의 당첨 로또를 찾을 수 없습니다."),
     BAD_FILE_EXTENSION(404,  "FILE extension error"),
     FILE_EMPTY(404,  "FILE empty"),
+    FILE_UPLOAD_FAIL(404,  "FILE upload fail"),
 
     /* 500 */
     INTERNAL_SERVER_ERROR(500,"서버 에러"),
