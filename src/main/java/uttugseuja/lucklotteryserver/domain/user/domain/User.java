@@ -57,4 +57,8 @@ public class User {
                 .build();
     }
 
+    public void updateProfilePath(String profilePath){
+        this.profilePath = profilePath;
+    }
+
 }
