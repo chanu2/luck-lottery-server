@@ -24,6 +24,7 @@ public enum ErrorCode {
     BAD_FILE_EXTENSION(404,  "FILE extension error"),
     FILE_EMPTY(404,  "FILE empty"),
     FILE_UPLOAD_FAIL(404,  "FILE upload fail"),
+    FILE_OVER_SIZE(404,  "FILE 크기가 10mb를 초과 하였습니다"),
 
     /* 500 */
     INTERNAL_SERVER_ERROR(500,"서버 에러"),
