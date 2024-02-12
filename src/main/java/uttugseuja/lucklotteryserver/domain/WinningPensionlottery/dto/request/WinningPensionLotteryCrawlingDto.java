@@ -2,8 +2,7 @@ package uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -11,7 +10,7 @@ import java.util.List;
 public class WinningPensionLotteryCrawlingDto {
 
     private Integer pensionLotteryRound;
-    private LocalDateTime lotteryDrawTime;
+    private LocalDate lotteryDrawTime;
     private List<Integer> winningNumbers;
 
 }
