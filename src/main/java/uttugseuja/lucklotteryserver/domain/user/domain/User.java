@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 import uttugseuja.lucklotteryserver.domain.user.domain.vo.UserInfoVO;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -27,6 +28,7 @@ public class User {
 
     private String email;
 
+    @Nullable
     private String profilePath;
 
     @Enumerated(EnumType.STRING)
