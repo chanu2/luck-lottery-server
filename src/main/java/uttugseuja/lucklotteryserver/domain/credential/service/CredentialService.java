@@ -119,7 +119,7 @@ public class CredentialService {
                         .oauthProvider(oauthProvider.getValue())
                         .oauthId(oidcDecodePayload.getSub())
                         .email(oidcDecodePayload.getEmail())
-                        .profilePath(oidcDecodePayload.getProfile())
+                        .profilePath(registerUserRequest.getProfilePath())
                         .nickname(registerUserRequest.getNickname())
                         .build();
         userRepository.save(user);

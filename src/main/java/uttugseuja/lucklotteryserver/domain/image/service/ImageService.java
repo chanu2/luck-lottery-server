@@ -40,7 +40,7 @@ public class ImageService implements ImageUtils{
         if (file.isEmpty() && file.getOriginalFilename() != null)
             throw FileEmptyException.EXCEPTION;
 
-        if(file.getSize() / (1024 * 1024) > 5){
+        if(file.getSize() / (1024 * 1024) > 10){
             throw FileOversizeException.EXCEPTION;
         }
         String originalFilename = file.getOriginalFilename();
