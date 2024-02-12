@@ -2,14 +2,14 @@ package uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.response;
 
 import lombok.Getter;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.vo.WinningPensionLotteryBaseInfoVo;
+import java.time.LocalDate;
 
-import java.time.LocalDateTime;
 
 @Getter
 public class WinningPensionLotteryResponse {
 
     private Integer round;
-    private LocalDateTime winningDate;
+    private LocalDate winningDate;
     private Integer lotteryGroup;
     private Integer winningFirstNum;
     private Integer winningSecondNum;
