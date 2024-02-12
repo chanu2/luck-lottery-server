@@ -29,7 +29,7 @@ public class WinningPensionLotteryJdbcRepository {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 WinningPensionLottery pensionLottery = pensionLotteryList.get(i);
-                Timestamp timestamp = Timestamp.valueOf(pensionLottery.getLotteryDrawTime());
+                Timestamp timestamp = Timestamp.valueOf(pensionLottery.getLotteryDrawTime().atStartOfDay());
                 ps.setInt(1,pensionLottery.getRound());
                 ps.setTimestamp(2,timestamp);
                 ps.setInt(3,pensionLottery.getLotteryGroup());
