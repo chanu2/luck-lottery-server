@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.vo.WinningPensionLotteryBaseInfoVo;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -25,7 +25,7 @@ public class WinningPensionLottery {
     private Long id;
 
     private Integer round;
-    private LocalDateTime lotteryDrawTime;
+    private LocalDate lotteryDrawTime;
     private Integer lotteryGroup;
     private Integer winningFirstNum;
     private Integer winningSecondNum;
@@ -43,7 +43,7 @@ public class WinningPensionLottery {
     @Builder
     public WinningPensionLottery(Long id,
                                  Integer round,
-                                 LocalDateTime lotteryDrawTime,
+                                 LocalDate lotteryDrawTime,
                                  Integer lotteryGroup,
                                  Integer winningFirstNum,
                                  Integer winningSecondNum,

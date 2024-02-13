@@ -21,7 +21,7 @@ import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.PageA
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.WinningPensionLotteryNotFoundException;
 import uttugseuja.lucklotteryserver.global.error.exception.LuckLotteryIoException;
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -147,17 +147,14 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
 
         Pattern pattern = Pattern.compile("\\d+");
         Matcher matcher = pattern.matcher(dayAndRound);
-
         List<Integer> parsedData = new ArrayList<>();
 
         while (matcher.find()) {
             parsedData.add(Integer.parseInt(matcher.group()));
         }
 
-        LocalDateTime drawDay = LocalDateTime.of(parsedData.get(1), parsedData.get(2), parsedData.get(3), 17,0);
-
+        LocalDate drawDay = LocalDate.of(parsedData.get(1), parsedData.get(2), parsedData.get(3));
         Integer drawRound = parsedData.get(0);
-
         return new LotteryDrawDayDto(drawRound,drawDay);
     }
 

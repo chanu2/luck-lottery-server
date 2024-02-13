@@ -19,7 +19,7 @@ import uttugseuja.lucklotteryserver.domain.pensionlottery.presentation.dto.respo
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.global.common.Rank;
 import uttugseuja.lucklotteryserver.global.utils.user.UserUtils;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -107,7 +107,7 @@ public class PensionLotteryService {
     }
 
     private PensionLotteryResponse getPensionLotteryResponse(Integer round,
-                                                             LocalDateTime winningDate,
+                                                             LocalDate winningDate,
                                                              WinningPensionLottery winningPensionLottery,
                                                              List<PensionLotteryNumbersResponse> pensionLotteryNumbersResponseList) {
 
@@ -124,7 +124,7 @@ public class PensionLotteryService {
     }
 
     private PensionLotteryResponse getPensionLotteryEmptyResponse(Integer round,
-                                                                  LocalDateTime winningDate,
+                                                                  LocalDate winningDate,
                                                                   List<PensionLotteryNumbersResponse> pensionLotteryNumbersResponseList) {
 
         return new PensionLotteryResponse(

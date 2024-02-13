@@ -3,6 +3,7 @@ package uttugseuja.lucklotteryserver.domain.pensionlottery.domain.vo;
 import lombok.Builder;
 import lombok.Getter;
 import uttugseuja.lucklotteryserver.global.common.Rank;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -12,7 +13,7 @@ public class PensionLotteryBaseInfoVo {
     private final Long pensionLotteryId;
     private Boolean checkWinningBonus;
     private final Integer pensionRound;
-    private final LocalDateTime winningDate;
+    private final LocalDate winningDate;
     private final Integer pensionGroup;
     private final Integer pensionFirstNum;
     private final Integer pensionSecondNum;

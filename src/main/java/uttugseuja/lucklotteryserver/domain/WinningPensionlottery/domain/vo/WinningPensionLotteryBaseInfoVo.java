@@ -2,7 +2,7 @@ package uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.vo;
 
 import lombok.Builder;
 import lombok.Getter;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Builder
@@ -10,7 +10,7 @@ public class WinningPensionLotteryBaseInfoVo {
 
     private Long winningPensionLotteryId;
     private Integer round;
-    private LocalDateTime lotteryDrawTime;
+    private LocalDate lotteryDrawTime;
     private Integer lotteryGroup;
     private Integer winningFirstNum;
     private Integer winningSecondNum;
