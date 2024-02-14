@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.request.CreateLotteryRequest;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.OneRoundResponse;
@@ -43,7 +44,7 @@ public class LotteryController {
     public Slice<OneRoundResponse> getLotteries(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                                 @RequestParam(value = "size", defaultValue = "10") Integer size) {
 
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC,"round");
 
         return lotteryService.getLotteriesByUser(pageRequest);
     }

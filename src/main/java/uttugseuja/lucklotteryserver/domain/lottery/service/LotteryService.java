@@ -119,7 +119,9 @@ public class LotteryService {
                 .map(lottery -> {
                     List<Integer> correctNumbers = getCorrectNumbers(getLotteryNumbers(lottery),
                             getWinningLotteryNumbers(winningLottery));
-                    return new LotteryResponse(lottery.getLotteryBaseInfoVo(), correctNumbers);
+
+                    List<Boolean> lotteryResult = getLotteryResult(correctNumbers, getLotteryNumbers(lottery));
+                    return new LotteryResponse(lottery.getLotteryBaseInfoVo(), lotteryResult);
                 })
                 .collect(Collectors.toList());
     }
@@ -214,4 +216,17 @@ public class LotteryService {
         }};
     }
 
+    private List<Boolean> getLotteryResult(List<Integer> lotteryNumbers, List<Integer> correctNumbers) {
+        List<Boolean> lotteryResult = new ArrayList<>();
+
+        for(Integer number : lotteryNumbers) {
+            if(correctNumbers.contains(number)) {
+                lotteryResult.add(true);
+            } else {
+                lotteryResult.add(false);
+            }
+        }
+
+        return lotteryResult;
+    }
 }
