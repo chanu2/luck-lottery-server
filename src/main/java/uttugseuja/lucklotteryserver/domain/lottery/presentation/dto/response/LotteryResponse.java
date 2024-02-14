@@ -23,9 +23,9 @@ public class LotteryResponse {
 
     private Rank rank;
 
-    private List<Integer> correctNumbers;
+    private List<Boolean> correctNumbers;
 
-    public LotteryResponse(LotteryBaseInfoVo lotteryBaseInfoVo, List<Integer> correctNumbers) {
+    public LotteryResponse(LotteryBaseInfoVo lotteryBaseInfoVo, List<Boolean> lotteryResult) {
         this.firstNum = lotteryBaseInfoVo.getFirstNum();
         this.secondNum = lotteryBaseInfoVo.getSecondNum();
         this.thirdNum = lotteryBaseInfoVo.getThirdNum();
@@ -33,6 +33,6 @@ public class LotteryResponse {
         this.fifthNum = lotteryBaseInfoVo.getFifthNum();
         this.sixthNum = lotteryBaseInfoVo.getSixthNum();
         this.rank = lotteryBaseInfoVo.getRank();
-        this.correctNumbers = correctNumbers;
+        this.correctNumbers = lotteryResult;
     }
 }
