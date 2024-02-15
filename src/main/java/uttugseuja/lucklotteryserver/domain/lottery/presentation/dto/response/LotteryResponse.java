@@ -1,38 +1,29 @@
 package uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response;
 
 import lombok.Getter;
-import uttugseuja.lucklotteryserver.domain.lottery.domain.vo.LotteryBaseInfoVo;
-import uttugseuja.lucklotteryserver.global.common.Rank;
+import uttugseuja.lucklotteryserver.domain.winning_lottery.presentation.dto.response.WinningLotteryNumbersResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 public class LotteryResponse {
 
-    private Integer firstNum;
+    private Integer round;
 
-    private Integer secondNum;
+    private LocalDate winningDate;
 
-    private Integer thirdNum;
+    private List<LotteryNumbersResponse> lotteryNumbersResponse;
 
-    private Integer fourthNum;
+    private WinningLotteryNumbersResponse winningLotteryNumbersResponse;
 
-    private Integer fifthNum;
-
-    private Integer sixthNum;
-
-    private Rank rank;
-
-    private List<Boolean> correctNumbers;
-
-    public LotteryResponse(LotteryBaseInfoVo lotteryBaseInfoVo, List<Boolean> lotteryResult) {
-        this.firstNum = lotteryBaseInfoVo.getFirstNum();
-        this.secondNum = lotteryBaseInfoVo.getSecondNum();
-        this.thirdNum = lotteryBaseInfoVo.getThirdNum();
-        this.fourthNum = lotteryBaseInfoVo.getFourthNum();
-        this.fifthNum = lotteryBaseInfoVo.getFifthNum();
-        this.sixthNum = lotteryBaseInfoVo.getSixthNum();
-        this.rank = lotteryBaseInfoVo.getRank();
-        this.correctNumbers = lotteryResult;
+    public LotteryResponse(Integer round,
+                           LocalDate winningDate,
+                           List<LotteryNumbersResponse> lotteryNumbersResponse,
+                           WinningLotteryNumbersResponse winningLotteryNumbersResponse) {
+        this.round = round;
+        this.winningDate = winningDate;
+        this.lotteryNumbersResponse = lotteryNumbersResponse;
+        this.winningLotteryNumbersResponse = winningLotteryNumbersResponse;
     }
 }

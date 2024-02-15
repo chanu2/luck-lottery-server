@@ -1,4 +1,4 @@
-package uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response;
+package uttugseuja.lucklotteryserver.domain.winning_lottery.presentation.dto.response;
 
 import lombok.Getter;
 import uttugseuja.lucklotteryserver.domain.winning_lottery.domain.vo.WinningLotteryBaseInfoVo;
