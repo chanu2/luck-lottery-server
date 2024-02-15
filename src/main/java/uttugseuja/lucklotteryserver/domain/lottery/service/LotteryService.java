@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import uttugseuja.lucklotteryserver.domain.lottery.domain.Lottery;
 import uttugseuja.lucklotteryserver.domain.lottery.domain.repository.LotteryRepository;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.request.CreateLotteryRequest;
-import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.OneRoundResponse;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.LotteryResponse;
+import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.LotteryNumbersResponse;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.RandomLotteryResponse;
-import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.WinningLotteryNumbersResponse;
+import uttugseuja.lucklotteryserver.domain.winning_lottery.presentation.dto.response.WinningLotteryNumbersResponse;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.domain.winning_lottery.domain.WinningLottery;
 import uttugseuja.lucklotteryserver.domain.winning_lottery.service.WinningLotteryUtils;
@@ -60,7 +60,7 @@ public class LotteryService {
     }
 
     @Transactional
-    public Slice<OneRoundResponse> getLotteriesByUser(Pageable pageable) {
+    public Slice<LotteryResponse> getLotteriesByUser(Pageable pageable) {
         User user = userUtils.getUserFromSecurityContext();
 
         int recentRound = winningLotteryUtils.getRecentRound();
@@ -93,42 +93,42 @@ public class LotteryService {
                 .collect(Collectors.groupingBy(Lottery::getRound, HashMap::new, Collectors.toList()));
     }
 
-    private OneRoundResponse processLottery(Integer lotteryRound, Integer recentRound, List<Lottery> lotteries) {
+    private LotteryResponse processLottery(Integer lotteryRound, Integer recentRound, List<Lottery> lotteries) {
         if(lotteryRound <= recentRound) {
             WinningLottery winningLottery = winningLotteryUtils.getWinningLottery(lotteryRound);
 
-            List<LotteryResponse> lotteryResponses = makeLotteryResponsesNotRecent(lotteries, winningLottery);
+            List<LotteryNumbersResponse> lotteryNumbersRespons = makeLotteryResponsesNotRecent(lotteries, winningLottery);
 
             WinningLotteryNumbersResponse winningLotteryNumbersResponse =
                     new WinningLotteryNumbersResponse(winningLottery.getWinningLotteryBaseInfoVo());
 
-            return new OneRoundResponse(lotteryRound, winningLottery.getWinningDate(),
-                    lotteryResponses, winningLotteryNumbersResponse);
+            return new LotteryResponse(lotteryRound, winningLottery.getWinningDate(),
+                    lotteryNumbersRespons, winningLotteryNumbersResponse);
         } else {
             LocalDate winningDate =
                     winningLotteryUtils.getWinningLottery(recentRound).getWinningDate().plusDays(7);
 
-            List<LotteryResponse> lotteryResponses = makeLotteryResponseRecent(lotteries);
-            return new OneRoundResponse(lotteryRound, winningDate, lotteryResponses, null);
+            List<LotteryNumbersResponse> lotteryNumbersRespons = makeLotteryResponseRecent(lotteries);
+            return new LotteryResponse(lotteryRound, winningDate, lotteryNumbersRespons, null);
         }
     }
 
-    private List<LotteryResponse> makeLotteryResponsesNotRecent(List<Lottery> lotteries,
-                                                                WinningLottery winningLottery) {
+    private List<LotteryNumbersResponse> makeLotteryResponsesNotRecent(List<Lottery> lotteries,
+                                                                       WinningLottery winningLottery) {
         return lotteries.stream()
                 .map(lottery -> {
                     List<Integer> correctNumbers = getCorrectNumbers(getLotteryNumbers(lottery),
                             getWinningLotteryNumbers(winningLottery));
 
                     List<Boolean> lotteryResult = getLotteryResult(correctNumbers, getLotteryNumbers(lottery));
-                    return new LotteryResponse(lottery.getLotteryBaseInfoVo(), lotteryResult);
+                    return new LotteryNumbersResponse(lottery.getLotteryBaseInfoVo(), lotteryResult);
                 })
                 .collect(Collectors.toList());
     }
 
-    private List<LotteryResponse> makeLotteryResponseRecent(List<Lottery> lotteries) {
+    private List<LotteryNumbersResponse> makeLotteryResponseRecent(List<Lottery> lotteries) {
         return lotteries.stream()
-                .map(lottery -> new LotteryResponse(lottery.getLotteryBaseInfoVo(), null))
+                .map(lottery -> new LotteryNumbersResponse(lottery.getLotteryBaseInfoVo(), null))
                 .collect(Collectors.toList());
     }
 
@@ -216,7 +216,7 @@ public class LotteryService {
         }};
     }
 
-    private List<Boolean> getLotteryResult(List<Integer> lotteryNumbers, List<Integer> correctNumbers) {
+    private List<Boolean> getLotteryResult(List<Integer> correctNumbers, List<Integer> lotteryNumbers) {
         List<Boolean> lotteryResult = new ArrayList<>();
 
         for(Integer number : lotteryNumbers) {
