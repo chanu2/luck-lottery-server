@@ -19,6 +19,12 @@ jobs:
           java-version: 17
           distribution: 'corretto'
 
+      - name: Set FcmKey
+        run: |
+          mkdir -p src/main/resources
+          echo "${{ secrets.FIREBASE_SERVICE_KEY }}" | base64 --decode > src/main/resources/firebase_service_key.json
+          find src
+
       - name: Set YML
         run: |
           mkdir -p src/main/resources
