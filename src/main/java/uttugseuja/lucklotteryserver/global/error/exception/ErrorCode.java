@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCode {
 
+    /* 400 BAD_REQUEST : 잘못된 요청 */
+    NOTIFICATION_FCM_TOKEN_INVALID(400, "FCM Token이 유효하지 않습니다."),
+
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_TOKEN(401, "토큰이 유효하지 않습니다."),
     EXPIRED_TOKEN(401, "토큰이 만료되었습니다."),
@@ -35,6 +38,7 @@ public enum ErrorCode {
     PAGE_ACCESS_LOTTERY_ERROR(500, "복권 사이트 페이지에 접속할 수 없습니다. URL 또는 네트워크 상태를 확인해 주세요"),
     CRAWLING_IO_EXCEPTION(500, "크롤링중 입출력 작업 중 에러 발생"),
     DATA_NOT_FOUND(500, "크롤링으로 가져온 데이터가 Null 입니다"),
+    INVALID_FIREBASE_KEY(500, "유효하지 않은 FireBase Key 입니다.")
 
     ;
 
