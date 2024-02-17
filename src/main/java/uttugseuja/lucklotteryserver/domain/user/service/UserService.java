@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uttugseuja.lucklotteryserver.domain.image.service.ImageUtils;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
+import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeNotificationStatusRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeProfileRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.response.UserProfileResponse;
 import uttugseuja.lucklotteryserver.global.utils.user.UserUtils;
@@ -32,6 +33,19 @@ public class UserService {
         return new UserProfileResponse(user.getUserInfo());
     }
 
+    @Transactional
+    public void changeLotteryNotificationStatus(ChangeNotificationStatusRequest changeNotificationStatusRequest) {
+        User user = userUtils.getUserFromSecurityContext();
+
+        user.updateLotteryNotificationStatus(changeNotificationStatusRequest.getNotificationStatus());
+    }
+
+    @Transactional
+    public void changePensionLotteryNotificationStatus(ChangeNotificationStatusRequest changeNotificationStatusRequest) {
+        User user = userUtils.getUserFromSecurityContext();
+
+        user.updatePensionLotteryNotificationStatus(changeNotificationStatusRequest.getNotificationStatus());
+    }
 
     private void deleteUserProfilePath(String profilePath){
 
