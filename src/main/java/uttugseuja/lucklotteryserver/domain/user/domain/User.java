@@ -34,6 +34,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private AccountRole accountRole = AccountRole.USER;
 
+    private Boolean lotteryNotificationStatus;
+
+    private Boolean pensionLotteryNotificationStatus;
+
     @Builder
     public User(
             Long id,
@@ -48,6 +52,8 @@ public class User {
         this.oauthId = oauthId;
         this.email = email;
         this.profilePath = profilePath;
+        this.lotteryNotificationStatus = true;
+        this.pensionLotteryNotificationStatus = true;
     }
 
     public UserInfoVO getUserInfo() {
@@ -61,6 +67,14 @@ public class User {
 
     public void updateProfilePath(String profilePath){
         this.profilePath = profilePath;
+    }
+
+    public void updateLotteryNotificationStatus(Boolean notificationStatus) {
+        this.lotteryNotificationStatus = notificationStatus;
+    }
+
+    public void updatePensionLotteryNotificationStatus(Boolean notificationStatus) {
+        this.pensionLotteryNotificationStatus = notificationStatus;
     }
 
 }
