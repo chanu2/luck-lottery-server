@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uttugseuja.lucklotteryserver.domain.lottery.domain.Lottery;
 import uttugseuja.lucklotteryserver.domain.lottery.domain.repository.LotteryRepository;
+import uttugseuja.lucklotteryserver.domain.lottery.exception.DuplicateNumberException;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.request.CreateLotteryRequest;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.LotteryResponse;
 import uttugseuja.lucklotteryserver.domain.lottery.presentation.dto.response.LotteryNumbersResponse;
@@ -55,6 +56,8 @@ public class LotteryService {
 
         Lottery lottery = makeLottery(user, recentRound + 1,
                 winningDate.plusDays(7), createLotteryRequest);
+
+        checkDuplication(lottery);
 
         lotteryRepository.save(lottery);
     }
@@ -228,5 +231,13 @@ public class LotteryService {
         }
 
         return lotteryResult;
+    }
+
+    private void checkDuplication(Lottery lottery) {
+        List<Integer> lotteryNumbers = getLotteryNumbers(lottery);
+
+        if(lotteryNumbers.size() != lotteryNumbers.stream().distinct().count()) {
+            throw DuplicateNumberException.EXCEPTION;
+        }
     }
 }
