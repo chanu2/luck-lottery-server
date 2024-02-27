@@ -15,16 +15,25 @@ public class GoogleOauthStrategy implements OauthStrategy{
     private final GoogleAuthClient googleAuthClient;
     private final OauthOIDCProvider oauthOIDCProvider;
     private static final String ISSUER = "https://accounts.google.com";
+    private static final String QUERY_STRING =
+            "/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&response_type=code&scope=%s";
+    private static final String scope = "https://www.googleapis.com/auth/userinfo.email";
 
     @Override
     public OIDCDecodePayload getOIDCDecodePayload(String token){
-        OIDCKeysResponse oidcKakaoKeysResponse = googleAuthClient.getGoogleOIDCOpenKeys();
-        return oauthOIDCProvider.getPayloadFromIdToken(token,ISSUER,oauthProperties.getKakaoAppId(),oidcKakaoKeysResponse);
+        OIDCKeysResponse oidcGoogleKeysResponse = googleAuthClient.getGoogleOIDCOpenKeys();
+        return oauthOIDCProvider.getPayloadFromIdToken(token,ISSUER,oauthProperties.getGoogleAppId(),oidcGoogleKeysResponse);
     }
 
     @Override
     public String getOauthLink() {
-        return null;
+
+        return oauthProperties.getGoogleBaseUrl()
+                + String.format(
+                QUERY_STRING,
+                oauthProperties.getGoogleClientId(),
+                oauthProperties.getGoogleRedirectUrl(),
+                scope);
     }
 
     @Override
