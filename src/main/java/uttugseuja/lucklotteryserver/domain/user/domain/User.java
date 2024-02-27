@@ -77,4 +77,8 @@ public class User {
         this.pensionLotteryNotificationStatus = notificationStatus;
     }
 
+    public void updateNickname(String nickname){
+        this.nickname = nickname;
+    }
+
 }

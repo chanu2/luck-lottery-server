@@ -46,6 +46,12 @@ public class CredentialService {
     }
 
     @Transactional
+    public void logoutUser() {
+        User user = userUtils.getUserFromSecurityContext();
+        refreshTokenRedisEntityRepository.deleteById(user.getId().toString());
+    }
+
+    @Transactional
     public void singUpTest(RegisterRequest registerRequest){
         User user =
                 User.builder()
@@ -173,6 +179,8 @@ public class CredentialService {
         refreshTokenRedisEntityRepository.save(build);
         return refreshToken;
     }
+
+
 
 }
 

@@ -97,4 +97,10 @@ public class CredentialController {
         return credentialService.tokenRefresh(tokenRefreshRequest.getRefreshToken());
     }
 
+    @Operation(summary = "로그아웃")
+    @PostMapping("/logout")
+    public void logout() {
+        credentialService.logoutUser();
+    }
+
 }

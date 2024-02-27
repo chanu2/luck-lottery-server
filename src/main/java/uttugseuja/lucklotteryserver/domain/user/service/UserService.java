@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uttugseuja.lucklotteryserver.domain.image.service.ImageUtils;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
+import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeNicknameRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeNotificationStatusRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeProfileRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.response.UserProfileResponse;
@@ -18,6 +19,12 @@ public class UserService {
 
     private final UserUtils userUtils;
     private final ImageUtils imageUtils;
+
+    @Transactional
+    public void changeNickname(ChangeNicknameRequest changeNicknameRequest){
+        User user = userUtils.getUserFromSecurityContext();
+        user.updateNickname(changeNicknameRequest.getNickname());
+    }
 
     @Transactional
     public UserProfileResponse changeProfilePath(ChangeProfileRequest changeProfileRequest){
