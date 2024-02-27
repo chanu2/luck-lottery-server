@@ -19,7 +19,6 @@ import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.Crawl
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.DataNotFoundException;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.PageAccessException;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.WinningPensionLotteryNotFoundException;
-import uttugseuja.lucklotteryserver.global.error.exception.LuckLotteryIoException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
                 .orElseThrow(()-> WinningPensionLotteryNotFoundException.EXCEPTION);
     }
 
-    private WinningPensionLotteryCrawlingDto crawlingWinningPensionLottery(String round) throws LuckLotteryIoException {
+    private WinningPensionLotteryCrawlingDto crawlingWinningPensionLottery(String round) {
 
         List<Integer> winningNumber = new ArrayList<>();
 
@@ -71,9 +70,6 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
 
             String selectedText = selectedOption.text();
             LotteryDrawDayDto lottoDayAndRound = getLottoDayAndRound(selectedText);
-
-            log.info("lottoDayAndRound.getRound()={}",lottoDayAndRound.getRound());
-            log.info("lottoDayAndRound.getLotteryDrawTime()={}",lottoDayAndRound.getLotteryDrawTime());
 
             Elements prizes = document.select(PRIZE_CSS_QUERY);
 
@@ -107,7 +103,7 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
         }
     }
 
-    public void saveWinningPensionLottery(Integer starRound, Integer endRound) throws LuckLotteryIoException {
+    public void saveWinningPensionLottery(Integer starRound, Integer endRound) {
 
         List<WinningPensionLottery> winningPensionLotteryList= new ArrayList<>();
 
@@ -120,7 +116,7 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
 
     }
 
-    public WinningPensionLottery createWinningPensionLottery(String round) throws LuckLotteryIoException {
+    public WinningPensionLottery createWinningPensionLottery(String round)  {
 
         WinningPensionLotteryCrawlingDto process = crawlingWinningPensionLottery(round);
         List<Integer> nums = process.getWinningNumbers();
