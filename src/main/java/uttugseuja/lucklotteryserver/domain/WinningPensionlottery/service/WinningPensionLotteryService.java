@@ -15,7 +15,7 @@ import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.domain.reposito
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.request.LotteryDrawDayDto;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.request.WinningPensionLotteryCrawlingDto;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.dto.response.WinningPensionLotteryResponse;
-import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.CrawlingIOException;
+import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.CrawlingException;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.DataNotFoundException;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.PageAccessException;
 import uttugseuja.lucklotteryserver.domain.WinningPensionlottery.exception.WinningPensionLotteryNotFoundException;
@@ -96,7 +96,7 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
             throw PageAccessException.EXCEPTION;
 
         } catch (IOException e) {
-            throw CrawlingIOException.EXCEPTION;
+            throw CrawlingException.EXCEPTION;
 
         } catch (NullPointerException e) {
             throw DataNotFoundException.EXCEPTION;
