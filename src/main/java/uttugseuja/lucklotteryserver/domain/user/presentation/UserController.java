@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeNicknameRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeNotificationStatusRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeProfileRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.response.UserProfileResponse;
@@ -23,6 +24,12 @@ public class UserController {
     @PatchMapping("/profile")
     public UserProfileResponse changeProfilePath(@Valid @RequestBody ChangeProfileRequest changeProfileRequest){
         return userService.changeProfilePath(changeProfileRequest);
+    }
+
+    @Operation(summary = "유저 닉네임 변경하기")
+    @PatchMapping("/nickname")
+    public void changeNickname(@Valid @RequestBody ChangeNicknameRequest changeNicknameRequest){
+        userService.changeNickname(changeNicknameRequest);
     }
 
     @Operation(summary = "유저 로또 알림 on/off 변경하기")
