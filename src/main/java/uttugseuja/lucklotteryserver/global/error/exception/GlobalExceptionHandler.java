@@ -50,11 +50,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         List<FieldError> errors = ex.getBindingResult().getFieldErrors();
         ServletWebRequest servletWebRequest = (ServletWebRequest) request;
-        String url =
-                UriComponentsBuilder.fromHttpRequest(
-                                new ServletServerHttpRequest(servletWebRequest.getRequest()))
-                        .build()
-                        .toUriString();
+        String url = servletWebRequest.getRequest().getRequestURI();
         Map<String, Object> fieldAndErrorMessages =
                 errors.stream()
                         .collect(
