@@ -10,5 +10,7 @@ public class UserInfoVO {
     private final String nickname;
     private final String email;
     private final String profilePath;
+    private final Boolean lotteryNotificationStatus;
+    private final Boolean pensionLotteryNotificationStatus;
 
 }

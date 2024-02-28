@@ -62,6 +62,8 @@ public class User {
                 .nickname(nickname)
                 .email(email)
                 .profilePath(profilePath)
+                .lotteryNotificationStatus(lotteryNotificationStatus)
+                .pensionLotteryNotificationStatus(pensionLotteryNotificationStatus)
                 .build();
     }
 
