@@ -6,6 +6,9 @@ import uttugseuja.lucklotteryserver.global.api.client.GoogleAuthClient;
 import uttugseuja.lucklotteryserver.global.api.dto.OIDCKeysResponse;
 import uttugseuja.lucklotteryserver.global.property.OauthProperties;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 
 @AllArgsConstructor
 @Component("GOOGLE")
@@ -31,15 +34,23 @@ public class GoogleOauthStrategy implements OauthStrategy{
         return oauthProperties.getGoogleBaseUrl()
                 + String.format(
                 QUERY_STRING,
-                oauthProperties.getGoogleClientId(),
+                oauthProperties.getGoogleAppId(),
                 oauthProperties.getGoogleRedirectUrl(),
                 scope);
     }
 
     @Override
     public String getIdToken(String code) {
-        return null;
-    }
+        String decodedCode = URLDecoder.decode(code, StandardCharsets.UTF_8);
 
+        return googleAuthClient
+                .googleAuth(
+                        oauthProperties.getGoogleAppId(),
+                        oauthProperties.getGoogleRedirectUrl(),
+                        decodedCode,
+                        oauthProperties.getGoogleClientSecret())
+                .getIdToken();
+
+    }
 
 }

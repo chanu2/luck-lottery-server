@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import uttugseuja.lucklotteryserver.domain.credential.service.OIDCDecodePayload;
 import uttugseuja.lucklotteryserver.global.exception.ExpiredTokenException;
 import uttugseuja.lucklotteryserver.global.exception.InvalidTokenException;
+import uttugseuja.lucklotteryserver.global.exception.RSAAlgorithmException;
 
 import java.math.BigInteger;
 import java.security.Key;
@@ -48,7 +49,6 @@ public class JwtOIDCProvider {
         } catch (ExpiredJwtException e) {
             throw ExpiredTokenException.EXCEPTION;
         } catch (Exception e) {
-            log.error(e.toString());
             throw InvalidTokenException.EXCEPTION;
         }
     }
@@ -71,23 +71,22 @@ public class JwtOIDCProvider {
                     .parseClaimsJws(token);
         } catch (ExpiredJwtException e) {
             throw ExpiredTokenException.EXCEPTION;
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException e) {
+            throw RSAAlgorithmException.EXCEPTION;
+        }catch (Exception e) {
             log.error(e.toString());
             throw InvalidTokenException.EXCEPTION;
         }
     }
 
-    private Key getRSAPublicKey(String modulus, String exponent)
+    private PublicKey getRSAPublicKey(String modulus, String exponent)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        byte[] decodeN = Base64.getUrlDecoder().decode(modulus);
-        byte[] decodeE = Base64.getUrlDecoder().decode(exponent);
-        BigInteger n = new BigInteger(1, decodeN);
-        BigInteger e = new BigInteger(1, decodeE);
 
-        RSAPublicKeySpec keySpec = new RSAPublicKeySpec(n, e);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        BigInteger n = new BigInteger(1, Base64.getUrlDecoder().decode(modulus));
+        BigInteger e = new BigInteger(1, Base64.getUrlDecoder().decode(exponent));
+        RSAPublicKeySpec keySpec = new RSAPublicKeySpec(n,e);
         return keyFactory.generatePublic(keySpec);
     }
-
 
 }
