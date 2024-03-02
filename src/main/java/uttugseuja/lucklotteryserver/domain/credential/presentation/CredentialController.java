@@ -52,6 +52,12 @@ public class CredentialController {
         return credentialService.getIdTokenToCode(OauthProvider.KAKAO, oauthCodeRequest.getCode());
     }
 
+    @Operation(summary = "구글 로그인 링크 받기 테스트용")
+    @GetMapping("/oauth/link/google")
+    public OauthLoginLinkResponse getGoogleOauthLink() {
+        return new OauthLoginLinkResponse(credentialService.getOauthLink(OauthProvider.GOOGLE));
+    }
+
     @Operation(summary = "Id Token 검증")
     @GetMapping("/oauth/valid/register")
     @Parameters({
