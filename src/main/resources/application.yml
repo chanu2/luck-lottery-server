@@ -34,6 +34,9 @@ oauth:
     base-url: ${BASE_URL}
   google:
     app-id: ${GOOGLE_APP_ID}
+    redirect-url: ${GOOGLE_REDIRECT_URL}
+    base-url: ${GOOGLE_BASE_URL}
+    client-secret: ${GOOGLE_SECRET}
 
 auth:
   jwt:
