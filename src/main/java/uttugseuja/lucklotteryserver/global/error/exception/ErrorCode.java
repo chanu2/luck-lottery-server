@@ -40,7 +40,8 @@ public enum ErrorCode {
     CRAWLING_EXCEPTION(500, "크롤링중 입출력 작업 중 에러 발생"),
     DATA_NOT_FOUND(500, "크롤링으로 가져온 데이터가 Null 입니다"),
     INVALID_FIREBASE_KEY(500, "유효하지 않은 FireBase Key 입니다."),
-    NO_SUCH_PUBLIC_KEY(500, " kid 값이 일치하는 데이터가 없습니다.")
+    NO_SUCH_PUBLIC_KEY(500, " kid 값이 일치하는 데이터가 없습니다."),
+    NO_SUCH_RSA_ALGORITHM(500, "RSA 암호화 알고리즘을 지원하지 않는 환경입니다.")
     ;
 
     private int status;
