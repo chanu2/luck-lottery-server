@@ -5,7 +5,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
+import uttugseuja.lucklotteryserver.domain.credential.event.LogoutUserEvent;
+import uttugseuja.lucklotteryserver.domain.notification.event.DeviceTokenEvent;
 import uttugseuja.lucklotteryserver.domain.user.domain.vo.UserInfoVO;
+import uttugseuja.lucklotteryserver.global.event.Events;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -81,6 +84,22 @@ public class User {
 
     public void updateNickname(String nickname){
         this.nickname = nickname;
+    }
+
+    public static User of(Long userId) {
+        return User.builder().id(userId).build();
+    }
+
+    public void logout() {
+        LogoutUserEvent logoutUserEvent = LogoutUserEvent.builder().userId(id).build();
+        Events.raise(logoutUserEvent);
+
+        handleDeleteDeviceToken();
+    }
+
+    private void handleDeleteDeviceToken() {
+        DeviceTokenEvent deviceTokenEvent = new DeviceTokenEvent(User.of(id));
+        Events.raise(deviceTokenEvent);
     }
 
 }
