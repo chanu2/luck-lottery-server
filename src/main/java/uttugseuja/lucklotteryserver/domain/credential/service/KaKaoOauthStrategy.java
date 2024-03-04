@@ -3,12 +3,11 @@ package uttugseuja.lucklotteryserver.domain.credential.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.OauthTokenInfoDto;
 import uttugseuja.lucklotteryserver.global.api.client.KakaoOauthClient;
 import uttugseuja.lucklotteryserver.global.api.dto.OIDCKeysResponse;
+import uttugseuja.lucklotteryserver.global.api.dto.OauthTokenResponse;
 import uttugseuja.lucklotteryserver.global.property.OauthProperties;
-
-
-
 
 @AllArgsConstructor
 @Component("KAKAO")
@@ -38,12 +37,16 @@ public class KaKaoOauthStrategy implements OauthStrategy {
     }
 
     @Override
-    public String getIdToken(String code) {
-        return kakaoOauthClient
+    public OauthTokenInfoDto getOauthToken(String code) {
+        OauthTokenResponse oauthTokenResponse = kakaoOauthClient
                 .kakaoAuth(
                         oauthProperties.getKakaoClientId(),
                         oauthProperties.getKakaoRedirectUrl(),
-                        code)
-                .getIdToken();
+                        code);
+        return OauthTokenInfoDto.builder()
+                .idToken(oauthTokenResponse.getIdToken())
+                .accessToken(oauthTokenResponse.getAccessToken())
+                .build();
     }
+
 }
