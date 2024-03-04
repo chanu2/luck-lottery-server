@@ -6,7 +6,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class OauthIdTokenResponse {
+public class OauthTokenResponse {
     @JsonProperty("id_token")
     private String idToken;
+
+    @JsonProperty("access_token")
+    private String accessToken;
 }
