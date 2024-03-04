@@ -8,23 +8,16 @@ import uttugseuja.lucklotteryserver.domain.credential.domain.RefreshTokenRedisEn
 import uttugseuja.lucklotteryserver.domain.credential.domain.repository.RefreshTokenRedisEntityRepository;
 import uttugseuja.lucklotteryserver.domain.credential.exception.RefreshTokenExpiredException;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.RegisterRequest;
-import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AccessTokenDto;
-import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AfterOauthResponse;
-import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.AuthTokensResponse;
-import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.CheckRegisteredResponse;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.*;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.domain.user.domain.repository.UserRepository;
+import uttugseuja.lucklotteryserver.global.api.dto.UserInfoToOauthDto;
 import uttugseuja.lucklotteryserver.global.exception.InvalidTokenException;
 import uttugseuja.lucklotteryserver.global.exception.UserNotFoundException;
 import uttugseuja.lucklotteryserver.global.security.JwtTokenProvider;
 import uttugseuja.lucklotteryserver.global.utils.user.UserUtils;
-
-
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
 import java.util.UUID;
-
 
 @Service
 @AllArgsConstructor
@@ -66,15 +59,13 @@ public class CredentialService {
     }
 
     @Transactional
-    public AfterOauthResponse getIdTokenToCode(OauthProvider oauthProvider, String code) {
+    public AfterOauthResponse getTokenToCode(OauthProvider oauthProvider, String code) {
         OauthStrategy oauthStrategy = oauthFactory.getOauthstrategy(oauthProvider);
-        log.info("oauthStrategy ={}" ,oauthStrategy);
-        String idToken = oauthStrategy.getIdToken(code);
-        log.info("idToken ={}" ,idToken);
-        return new AfterOauthResponse(idToken);
+        OauthTokenInfoDto oauthToken = oauthStrategy.getOauthToken(code);
+        return new AfterOauthResponse(oauthToken.getIdToken(),oauthToken.getAccessToken());
     }
 
-    public CheckRegisteredResponse getUserAvailableRegister(String token, OauthProvider oauthProvider) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public CheckRegisteredResponse getUserAvailableRegister(String token, OauthProvider oauthProvider) {
         OauthStrategy oauthstrategy = oauthFactory.getOauthstrategy(oauthProvider);
         OIDCDecodePayload oidcDecodePayload = oauthstrategy.getOIDCDecodePayload(token);
         Boolean isRegistered = !checkUserCanRegister(oidcDecodePayload, oauthProvider);
@@ -94,7 +85,7 @@ public class CredentialService {
         return user.isEmpty();
     }
 
-    public AuthTokensResponse loginUserByOCIDToken(String token, OauthProvider oauthProvider) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public AuthTokensResponse loginUserByOCIDToken(String token, OauthProvider oauthProvider) {
         OauthStrategy oauthStrategy = oauthFactory.getOauthstrategy(oauthProvider);
         OIDCDecodePayload oidcDecodePayload = oauthStrategy.getOIDCDecodePayload(token);
 
@@ -117,7 +108,7 @@ public class CredentialService {
 
     @Transactional
     public AuthTokensResponse registerUserByOCIDToken(
-            String token, RegisterRequest registerUserRequest, OauthProvider oauthProvider) throws NoSuchAlgorithmException, InvalidKeySpecException {
+            String token, RegisterRequest registerUserRequest, OauthProvider oauthProvider) {
         OauthStrategy oauthStrategy = oauthFactory.getOauthstrategy(oauthProvider);
         OIDCDecodePayload oidcDecodePayload = oauthStrategy.getOIDCDecodePayload(token);
 
@@ -180,8 +171,6 @@ public class CredentialService {
         refreshTokenRedisEntityRepository.save(build);
         return refreshToken;
     }
-
-
 
 }
 
