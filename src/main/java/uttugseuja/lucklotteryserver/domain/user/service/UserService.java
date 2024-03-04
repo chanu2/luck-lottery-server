@@ -9,7 +9,7 @@ import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeNicknameRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeNotificationStatusRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeProfileRequest;
-import uttugseuja.lucklotteryserver.domain.user.presentation.dto.response.UserNotificationStateResponse;
+import uttugseuja.lucklotteryserver.domain.user.presentation.dto.response.UserInfoResponse;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.response.UserProfileResponse;
 import uttugseuja.lucklotteryserver.global.utils.user.UserUtils;
 
@@ -61,9 +61,8 @@ public class UserService {
 
     }
 
-    public UserNotificationStateResponse getUserNotificationState() {
+    public UserInfoResponse getUserInfo() {
         User user = userUtils.getUserFromSecurityContext();
-
-        return new UserNotificationStateResponse(user.getUserInfo());
+        return new UserInfoResponse(user.getUserInfo());
     }
 }

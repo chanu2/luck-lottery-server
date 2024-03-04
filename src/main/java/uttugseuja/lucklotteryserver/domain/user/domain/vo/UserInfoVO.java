@@ -7,6 +7,7 @@ import lombok.Getter;
 @Builder
 public class UserInfoVO {
     private final Long userId;
+    private final String oauthProvider;
     private final String nickname;
     private final String email;
     private final String profilePath;

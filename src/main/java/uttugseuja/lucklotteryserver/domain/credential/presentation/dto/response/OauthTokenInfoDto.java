@@ -1,12 +1,11 @@
 package uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response;
 
-
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
-public class AfterOauthResponse {
+@Builder
+public class OauthTokenInfoDto {
     private String idToken;
     private String accessToken;
 }

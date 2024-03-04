@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeNicknameRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeNotificationStatusRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeProfileRequest;
-import uttugseuja.lucklotteryserver.domain.user.presentation.dto.response.UserNotificationStateResponse;
+import uttugseuja.lucklotteryserver.domain.user.presentation.dto.response.UserInfoResponse;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.response.UserProfileResponse;
 import uttugseuja.lucklotteryserver.domain.user.service.UserService;
 
@@ -47,9 +47,9 @@ public class UserController {
         userService.changePensionLotteryNotificationStatus(changeNotificationStatusRequest);
     }
 
-    @Operation(summary = "유저 알림 상태 정보")
-    @GetMapping("/notification/state")
-    public UserNotificationStateResponse getUserNotificationState() {
-        return userService.getUserNotificationState();
+    @Operation(summary = "유저 장보 가져오기")
+    @GetMapping("/my/info")
+    public UserInfoResponse getUserInfo(){
+        return userService.getUserInfo();
     }
  }
