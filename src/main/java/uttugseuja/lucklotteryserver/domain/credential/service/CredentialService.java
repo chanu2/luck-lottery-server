@@ -172,5 +172,40 @@ public class CredentialService {
         return refreshToken;
     }
 
+    @Transactional
+    public void deleteUser(String oauthAccessToken) {
+        User user = userUtils.getUserFromSecurityContext();
+        OauthProvider provider = OauthProvider.valueOf(user.getOauthProvider().toUpperCase());
+        OauthStrategy oauthStrategy = oauthFactory.getOauthstrategy(provider);
+
+        if(provider.equals(OauthProvider.GOOGLE)) {
+            validateGoogleUser(oauthAccessToken, user, oauthStrategy);
+        }
+
+        deleteUserData(user);
+
+        if(provider.equals(OauthProvider.GOOGLE)) {
+            oauthStrategy.unLink(oauthAccessToken);
+        }else {
+            oauthStrategy.unLink(user.getOauthId());
+        }
+
+    }
+
+    private void validateGoogleUser(String oauthAccessToken, User user, OauthStrategy oauthStrategy) {
+        if(oauthAccessToken == null) {
+            throw InvalidTokenException.EXCEPTION;
+        }
+        UserInfoToOauthDto userInfo = oauthStrategy.getUserInfo(oauthAccessToken);
+        if (!userInfo.getId().equals(user.getOauthId())) {
+            throw InvalidTokenException.EXCEPTION;
+        }
+    }
+
+    private void deleteUserData(User user) {
+        refreshTokenRedisEntityRepository.deleteById(user.getId().toString());
+        userRepository.delete(user);
+    }
+
 }
 
