@@ -116,4 +116,10 @@ public class CredentialController {
         credentialService.logoutUser();
     }
 
+    @Operation(summary = "회원 탈퇴기능 입니다.  카카오,구글 oauth 연결도 unlink 합니다. ")
+    @DeleteMapping("/delete/me")
+    public void deleteUser(@RequestParam(value = "oauth_access_token", required = false) String token) {
+        credentialService.deleteUser(token);
+    }
+
 }
