@@ -2,10 +2,11 @@ package uttugseuja.lucklotteryserver.domain.credential.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.OauthTokenInfoDto;
 import uttugseuja.lucklotteryserver.global.api.client.GoogleAuthClient;
 import uttugseuja.lucklotteryserver.global.api.dto.OIDCKeysResponse;
+import uttugseuja.lucklotteryserver.global.api.dto.OauthTokenResponse;
 import uttugseuja.lucklotteryserver.global.property.OauthProperties;
-
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
@@ -40,16 +41,19 @@ public class GoogleOauthStrategy implements OauthStrategy{
     }
 
     @Override
-    public String getIdToken(String code) {
+    public OauthTokenInfoDto getOauthToken(String code) {
         String decodedCode = URLDecoder.decode(code, StandardCharsets.UTF_8);
 
-        return googleAuthClient
+        OauthTokenResponse oauthTokenResponse = googleAuthClient
                 .googleAuth(
                         oauthProperties.getGoogleAppId(),
                         oauthProperties.getGoogleRedirectUrl(),
                         decodedCode,
-                        oauthProperties.getGoogleClientSecret())
-                .getIdToken();
+                        oauthProperties.getGoogleClientSecret());
+       return OauthTokenInfoDto.builder()
+               .idToken(oauthTokenResponse.getIdToken())
+               .accessToken(oauthTokenResponse.getAccessToken())
+               .build();
 
     }
 
