@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.OauthTokenInfoDto;
 import uttugseuja.lucklotteryserver.global.api.client.GoogleAuthClient;
+import uttugseuja.lucklotteryserver.global.api.client.GoogleUnlinkClient;
 import uttugseuja.lucklotteryserver.global.api.dto.OIDCKeysResponse;
 import uttugseuja.lucklotteryserver.global.api.dto.OauthTokenResponse;
 import uttugseuja.lucklotteryserver.global.api.dto.UserInfoToOauthDto;
@@ -19,6 +20,7 @@ public class GoogleOauthStrategy implements OauthStrategy{
     private final OauthProperties oauthProperties;
     private final GoogleAuthClient googleAuthClient;
     private final OauthOIDCProvider oauthOIDCProvider;
+    private final GoogleUnlinkClient googleUnlinkClient;
     private static final String PREFIX = "Bearer ";
     private static final String ISSUER = "https://accounts.google.com";
     private static final String QUERY_STRING =
@@ -62,6 +64,11 @@ public class GoogleOauthStrategy implements OauthStrategy{
     @Override
     public UserInfoToOauthDto getUserInfo(String accessToken){
          return googleAuthClient.getGoogleInfo(PREFIX + accessToken);
+    }
+
+    @Override
+    public void unLink(String oauthAccessToken) {
+        googleUnlinkClient.unlink(oauthAccessToken);
     }
 
 }
