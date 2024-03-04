@@ -25,6 +25,9 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private List<PensionLottery> pensionLotteries = new ArrayList<>();
+
     private String nickname;
 
     private String oauthProvider;
