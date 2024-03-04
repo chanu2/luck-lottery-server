@@ -1,12 +1,11 @@
 package uttugseuja.lucklotteryserver.domain.credential.service;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.OauthTokenInfoDto;
 
 public interface OauthStrategy {
     OIDCDecodePayload getOIDCDecodePayload(String token);
 
     String getOauthLink();
 
-    String getIdToken(String code);
+    OauthTokenInfoDto getOauthToken(String code);
 }
