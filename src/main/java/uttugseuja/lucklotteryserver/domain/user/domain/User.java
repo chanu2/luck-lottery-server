@@ -7,9 +7,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 import uttugseuja.lucklotteryserver.domain.credential.event.LogoutUserEvent;
 import uttugseuja.lucklotteryserver.domain.notification.event.DeviceTokenEvent;
+import uttugseuja.lucklotteryserver.domain.pensionlottery.domain.PensionLottery;
 import uttugseuja.lucklotteryserver.domain.user.domain.vo.UserInfoVO;
 import uttugseuja.lucklotteryserver.global.event.Events;
-
+import java.util.ArrayList;
+import java.util.List;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -62,6 +64,7 @@ public class User {
     public UserInfoVO getUserInfo() {
         return UserInfoVO.builder()
                 .userId(id)
+                .oauthProvider(oauthProvider)
                 .nickname(nickname)
                 .email(email)
                 .profilePath(profilePath)
