@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.OauthTokenInfoDto;
 import uttugseuja.lucklotteryserver.global.api.client.KakaoOauthClient;
+import uttugseuja.lucklotteryserver.global.api.client.KakaoUnlinkClient;
 import uttugseuja.lucklotteryserver.global.api.dto.OIDCKeysResponse;
 import uttugseuja.lucklotteryserver.global.api.dto.OauthTokenResponse;
+import uttugseuja.lucklotteryserver.global.api.dto.UserInfoToOauthDto;
 import uttugseuja.lucklotteryserver.global.property.OauthProperties;
 
 @AllArgsConstructor
@@ -48,5 +50,12 @@ public class KaKaoOauthStrategy implements OauthStrategy {
                 .accessToken(oauthTokenResponse.getAccessToken())
                 .build();
     }
+
+    @Override
+    public UserInfoToOauthDto getUserInfo(String oauthAccessToken) {
+        return null;
+    }
+
+
 
 }
