@@ -49,7 +49,7 @@ public class CredentialController {
     @GetMapping("/oauth/kakao")
     public AfterOauthResponse kakaoAuth(OauthCodeRequest oauthCodeRequest) {
         log.info("code = {}",oauthCodeRequest.getCode());
-        return credentialService.getIdTokenToCode(OauthProvider.KAKAO, oauthCodeRequest.getCode());
+        return credentialService.getTokenToCode(OauthProvider.KAKAO, oauthCodeRequest.getCode());
     }
 
     @Operation(summary = "구글 로그인 링크 받기 테스트용")
@@ -62,7 +62,7 @@ public class CredentialController {
     @GetMapping("/oauth/google")
     public AfterOauthResponse googleAuth(OauthCodeRequest oauthCodeRequest) {
         log.info("code = {}",oauthCodeRequest.getCode());
-        return credentialService.getIdTokenToCode(OauthProvider.GOOGLE, oauthCodeRequest.getCode());
+        return credentialService.getTokenToCode(OauthProvider.GOOGLE, oauthCodeRequest.getCode());
     }
 
     @Operation(summary = "Id Token 검증")
