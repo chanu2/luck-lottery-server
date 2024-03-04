@@ -19,6 +19,9 @@ public class KaKaoOauthStrategy implements OauthStrategy {
     private final OauthProperties oauthProperties;
     private final KakaoOauthClient kakaoOauthClient;
     private final OauthOIDCProvider oauthOIDCProvider;
+    private final KakaoUnlinkClient kakaoUnlinkClient;
+    private static final String PREFIX = "KakaoAK ";
+    private static final String TARGET_TYPE = "user_id";
     private static final String ISSUER = "https://kauth.kakao.com";
     private static final String QUERY_STRING = "/oauth/authorize?client_id=%s&redirect_uri=%s&response_type=code";
 
@@ -56,6 +59,11 @@ public class KaKaoOauthStrategy implements OauthStrategy {
         return null;
     }
 
+    @Override
+    public void unLink(String userOauthId) {
+        String kakaoAdminKey = oauthProperties.getKakaoAdminKey();
+        kakaoUnlinkClient.unlinkUser(PREFIX + kakaoAdminKey,TARGET_TYPE, Long.valueOf(userOauthId));
+    }
 
 
 }
