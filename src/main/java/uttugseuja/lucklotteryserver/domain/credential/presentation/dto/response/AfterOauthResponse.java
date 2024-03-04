@@ -8,4 +8,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class AfterOauthResponse {
     private String idToken;
+    private String accessToken;
 }
