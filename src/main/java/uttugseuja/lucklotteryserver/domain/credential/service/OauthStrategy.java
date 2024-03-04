@@ -11,4 +11,6 @@ public interface OauthStrategy {
     OauthTokenInfoDto getOauthToken(String code);
 
     UserInfoToOauthDto getUserInfo(String oauthAccessToken);
+
+    void unLink(String oauthAccessToken);
 }
