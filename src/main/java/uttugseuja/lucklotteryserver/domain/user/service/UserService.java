@@ -9,6 +9,7 @@ import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeNicknameRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeNotificationStatusRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeProfileRequest;
+import uttugseuja.lucklotteryserver.domain.user.presentation.dto.request.ChangeUserInfoRequest;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.response.UserInfoResponse;
 import uttugseuja.lucklotteryserver.domain.user.presentation.dto.response.UserProfileResponse;
 import uttugseuja.lucklotteryserver.global.utils.user.UserUtils;
@@ -65,4 +66,36 @@ public class UserService {
         User user = userUtils.getUserFromSecurityContext();
         return new UserInfoResponse(user.getUserInfo());
     }
+
+    @Transactional
+    public UserInfoResponse changeUserInfo(ChangeUserInfoRequest changeUserInfoRequest) {
+        User user = userUtils.getUserFromSecurityContext();
+        String nowProfilePath = user.getProfilePath();
+        String updateProfile = changeUserInfoRequest.getProfilePath();
+
+        if(updateProfile == null && nowProfilePath != null) {
+
+            deleteUserProfilePath(user.getProfilePath());
+            user.updateProfilePath(null);
+
+        }else if(updateProfile != null && nowProfilePath == null) {
+            user.updateProfilePath(updateProfile);
+
+        }else if(updateProfile != null && nowProfilePath != null){
+
+            if(!updateProfile.equals(nowProfilePath)){
+                deleteUserProfilePath(user.getProfilePath());
+                user.updateProfilePath(null);
+            }
+        }
+
+        if(!changeUserInfoRequest.getNickname().equals(user.getNickname())){
+            user.updateNickname(changeUserInfoRequest.getNickname());
+        }
+
+        return new UserInfoResponse(user.getUserInfo());
+
+    }
+
+
 }
