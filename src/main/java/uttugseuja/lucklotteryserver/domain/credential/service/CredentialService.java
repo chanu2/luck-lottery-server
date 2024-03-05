@@ -190,6 +190,7 @@ public class CredentialService {
             oauthStrategy.unLink(user.getOauthId());
         }
 
+        user.withdrawal();
     }
 
     private void validateGoogleUser(String oauthAccessToken, User user, OauthStrategy oauthStrategy) {
