@@ -73,7 +73,7 @@ public class CredentialController {
     })
     public CheckRegisteredResponse valid(
             @RequestParam("idToken") String token,
-            @RequestParam("provider") OauthProvider oauthProvider) throws NoSuchAlgorithmException, InvalidKeySpecException {
+            @RequestParam("provider") OauthProvider oauthProvider) {
         log.info("controller token = {}",token);
         return credentialService.getUserAvailableRegister(token, oauthProvider);
     }
@@ -86,7 +86,7 @@ public class CredentialController {
     @PostMapping("/login")
     public AuthTokensResponse loginUser(
             @RequestParam("idToken") String token,
-            @RequestParam("provider") OauthProvider oauthProvider) throws NoSuchAlgorithmException, InvalidKeySpecException {
+            @RequestParam("provider") OauthProvider oauthProvider) {
         return credentialService.loginUserByOCIDToken(token, oauthProvider);
     }
 
