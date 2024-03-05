@@ -24,7 +24,6 @@ public class EventPublisherAspect implements ApplicationEventPublisherAware {
         if (appliedValue != null && appliedValue) {
             nested = true;
         } else {
-            nested = false;
             appliedLocal.set(Boolean.TRUE);
         }
 
