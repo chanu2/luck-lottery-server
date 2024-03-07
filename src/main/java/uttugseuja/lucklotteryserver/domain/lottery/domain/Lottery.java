@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import uttugseuja.lucklotteryserver.domain.lottery.domain.vo.LotteryBaseInfoVo;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.global.common.Rank;
+import uttugseuja.lucklotteryserver.global.database.BaseEntity;
 
 import java.time.LocalDate;
 
@@ -17,7 +18,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class Lottery {
+public class Lottery extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
