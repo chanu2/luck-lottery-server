@@ -27,7 +27,7 @@ public class PensionLotteryController {
     }
 
     @PostMapping("/save")
-    public void savePens용ionLottery(@Valid @RequestBody CreatePensionLotteryRequest createPensionLotteryRequest) {
+    public void savePensionLottery(@Valid @RequestBody CreatePensionLotteryRequest createPensionLotteryRequest) {
         pensionLotteryService.savePensionLottery(createPensionLotteryRequest);
     }
 
