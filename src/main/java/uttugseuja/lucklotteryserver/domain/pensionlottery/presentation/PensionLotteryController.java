@@ -3,6 +3,7 @@ package uttugseuja.lucklotteryserver.domain.pensionlottery.presentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -26,7 +27,7 @@ public class PensionLotteryController {
     }
 
     @PostMapping("/save")
-    public void savePensionLottery(@RequestBody CreatePensionLotteryRequest createPensionLotteryRequest) {
+    public void savePensionLottery(@Valid @RequestBody CreatePensionLotteryRequest createPensionLotteryRequest) {
         pensionLotteryService.savePensionLottery(createPensionLotteryRequest);
     }
 
