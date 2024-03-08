@@ -15,7 +15,7 @@ public class WinningPensionLotteryController {
 
     private final WinningPensionLotteryService winningPensionLotteryService;
 
-    @PostMapping("/save/db")
+    @PostMapping("admin/save/db")
     public void InsetDb(@RequestParam("start") Integer start, @RequestParam("end") Integer end) {
         winningPensionLotteryService.saveWinningPensionLottery(start,end);
     }
