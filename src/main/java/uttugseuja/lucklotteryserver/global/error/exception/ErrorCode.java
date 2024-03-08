@@ -23,7 +23,6 @@ public enum ErrorCode {
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
     WINNING_PENSION_LOTTERY_NOT_FOUND(404,  "연금 복권의 당첨 번호를 찾을수 없습니다"),
     OVER_LOTTERY_ROUND(404, "해당 회차는 최대 회차 범위를 초과 했습니다."),
-    WINNING_LOTTERY_NOT_FOUND(404, "해당 회차의 당첨 로또를 찾을 수 없습니다."),
     BAD_FILE_EXTENSION(404,  "FILE extension error"),
     FILE_EMPTY(404,  "FILE empty"),
     FILE_UPLOAD_FAIL(404,  "FILE upload fail"),
@@ -41,7 +40,8 @@ public enum ErrorCode {
     DATA_NOT_FOUND(500, "크롤링으로 가져온 데이터가 Null 입니다"),
     INVALID_FIREBASE_KEY(500, "유효하지 않은 FireBase Key 입니다."),
     NO_SUCH_PUBLIC_KEY(500, " kid 값이 일치하는 데이터가 없습니다."),
-    NO_SUCH_RSA_ALGORITHM(500, "RSA 암호화 알고리즘을 지원하지 않는 환경입니다.")
+    NO_SUCH_RSA_ALGORITHM(500, "RSA 암호화 알고리즘을 지원하지 않는 환경입니다."),
+    WINNING_LOTTERY_NOT_FOUND(500, "해당 회차의 당첨 로또를 찾을 수 없습니다.")
     ;
 
     private int status;
