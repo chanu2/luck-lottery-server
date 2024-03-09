@@ -44,7 +44,8 @@ public class SecurityConfig {
                                         ,"/api/v1/credentials/register","/api/v1/credentials/refresh").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
-                                .requestMatchers("/api/v1/winning/pension/lottery/admin/save/db").hasRole(AccountRole.ADMIN.getValue())
+                                .requestMatchers("/api/v1/winning/pension/lottery/admin/save/db",
+                                        "/api/v1/winning/lottery/admin/save/db").hasRole(AccountRole.ADMIN.getValue())
                                 .anyRequest().authenticated()
                 );
 

@@ -19,7 +19,7 @@ public class WinningLotteryController {
     private final WinningLotteryService winningLotteryService;
 
     @Operation(summary = "1회차부터 최근 회차까지의 당첨 로또 번호 DB에 저장")
-    @PostMapping("/save/all")
+    @PostMapping("/admin/save/db")
     public void saveWinningLotteriesOpenApi() {
         winningLotteryService.saveWinningLotteriesOpenApi();
     }
