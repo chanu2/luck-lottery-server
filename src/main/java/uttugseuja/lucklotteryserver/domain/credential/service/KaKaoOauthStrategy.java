@@ -3,6 +3,7 @@ package uttugseuja.lucklotteryserver.domain.credential.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.UnlinkRequest;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.OauthTokenInfoDto;
 import uttugseuja.lucklotteryserver.global.api.client.KakaoOauthClient;
 import uttugseuja.lucklotteryserver.global.api.client.KakaoUnlinkClient;
@@ -29,7 +30,7 @@ public class KaKaoOauthStrategy implements OauthStrategy {
     @Override
     public OIDCDecodePayload getOIDCDecodePayload(String token){
         OIDCKeysResponse oidcKakaoKeysResponse = kakaoOauthClient.getKakaoOIDCOpenKeys();
-        return oauthOIDCProvider.getPayloadFromIdToken(token,ISSUER,oauthProperties.getKakaoAppId(),oidcKakaoKeysResponse);
+        return oauthOIDCProvider.getPayloadFromIdToken(token,ISSUER,oauthProperties.getKakaoClientId(),oidcKakaoKeysResponse);
     }
 
     @Override
@@ -60,9 +61,13 @@ public class KaKaoOauthStrategy implements OauthStrategy {
     }
 
     @Override
-    public void unLink(String userOauthId) {
-        String kakaoAdminKey = oauthProperties.getKakaoAdminKey();
-        kakaoUnlinkClient.unlinkUser(PREFIX + kakaoAdminKey,TARGET_TYPE, Long.valueOf(userOauthId));
+    public void unLink(UnlinkRequest unlinkRequest) {
+
+        if (unlinkRequest.getOauthId() != null) {
+            String kakaoAdminKey = oauthProperties.getKakaoAdminKey();
+            kakaoUnlinkClient.unlinkUser(PREFIX + kakaoAdminKey,TARGET_TYPE, Long.valueOf(unlinkRequest.getOauthId()));
+        }
+
     }
 
 
