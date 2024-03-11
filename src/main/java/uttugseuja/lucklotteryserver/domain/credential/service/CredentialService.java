@@ -6,8 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uttugseuja.lucklotteryserver.domain.credential.domain.RefreshTokenRedisEntity;
 import uttugseuja.lucklotteryserver.domain.credential.domain.repository.RefreshTokenRedisEntityRepository;
+import uttugseuja.lucklotteryserver.domain.credential.exception.NotNullTokenException;
 import uttugseuja.lucklotteryserver.domain.credential.exception.RefreshTokenExpiredException;
+import uttugseuja.lucklotteryserver.domain.credential.exception.UserIdMismatchException;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.RegisterRequest;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.UnlinkRequest;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.*;
 import uttugseuja.lucklotteryserver.domain.user.domain.User;
 import uttugseuja.lucklotteryserver.domain.user.domain.repository.UserRepository;
@@ -206,6 +209,15 @@ public class CredentialService {
     private void deleteUserData(User user) {
         refreshTokenRedisEntityRepository.deleteById(user.getId().toString());
         userRepository.delete(user);
+    }
+
+    private UnlinkRequest createUnlinkRequest(OauthProvider provider, String oauthAccessToken, String oauthId) {
+
+        if (provider.equals(OauthProvider.GOOGLE)) {
+            return UnlinkRequest.createWithAccessToken(oauthAccessToken);
+        } else {
+            return UnlinkRequest.createWithOauthId(oauthId);
+        }
     }
 
 }
