@@ -1,5 +1,6 @@
 package uttugseuja.lucklotteryserver.domain.credential.service;
 
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.UnlinkRequest;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.OauthTokenInfoDto;
 import uttugseuja.lucklotteryserver.global.api.dto.UserInfoToOauthDto;
 
@@ -12,5 +13,5 @@ public interface OauthStrategy {
 
     UserInfoToOauthDto getUserInfo(String oauthAccessToken);
 
-    void unLink(String oauthAccessToken);
+    void unLink(UnlinkRequest unlinkRequest);
 }
