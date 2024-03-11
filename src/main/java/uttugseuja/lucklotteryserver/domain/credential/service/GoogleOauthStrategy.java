@@ -2,6 +2,7 @@ package uttugseuja.lucklotteryserver.domain.credential.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.request.UnlinkRequest;
 import uttugseuja.lucklotteryserver.domain.credential.presentation.dto.response.OauthTokenInfoDto;
 import uttugseuja.lucklotteryserver.global.api.client.GoogleAuthClient;
 import uttugseuja.lucklotteryserver.global.api.client.GoogleUnlinkClient;
@@ -67,8 +68,11 @@ public class GoogleOauthStrategy implements OauthStrategy{
     }
 
     @Override
-    public void unLink(String oauthAccessToken) {
-        googleUnlinkClient.unlink(oauthAccessToken);
+    public void unLink(UnlinkRequest unlinkRequest) {
+        if (unlinkRequest.getAccessToken() != null) {
+            googleUnlinkClient.unlink(unlinkRequest.getAccessToken());
+        }
+
     }
 
 }
