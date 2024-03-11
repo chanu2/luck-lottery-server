@@ -180,29 +180,30 @@ public class CredentialService {
         User user = userUtils.getUserFromSecurityContext();
         OauthProvider provider = OauthProvider.valueOf(user.getOauthProvider().toUpperCase());
         OauthStrategy oauthStrategy = oauthFactory.getOauthstrategy(provider);
+        String userOauthId = user.getOauthId();
 
         if(provider.equals(OauthProvider.GOOGLE)) {
-            validateGoogleUser(oauthAccessToken, user, oauthStrategy);
+            verifyUserOauthIdWithAccessToken(oauthAccessToken, userOauthId, oauthStrategy);
         }
 
         deleteUserData(user);
 
-        if(provider.equals(OauthProvider.GOOGLE)) {
-            oauthStrategy.unLink(oauthAccessToken);
-        }else {
-            oauthStrategy.unLink(user.getOauthId());
-        }
+        UnlinkRequest unlinkRequest = createUnlinkRequest(provider, oauthAccessToken, userOauthId);
+        oauthStrategy.unLink(unlinkRequest);
 
         user.withdrawal();
     }
 
-    private void validateGoogleUser(String oauthAccessToken, User user, OauthStrategy oauthStrategy) {
+    private void verifyUserOauthIdWithAccessToken(String oauthAccessToken, String oauthId, OauthStrategy oauthStrategy) {
+
         if(oauthAccessToken == null) {
-            throw InvalidTokenException.EXCEPTION;
+            throw NotNullTokenException.EXCEPTION;
         }
+
         UserInfoToOauthDto userInfo = oauthStrategy.getUserInfo(oauthAccessToken);
-        if (!userInfo.getId().equals(user.getOauthId())) {
-            throw InvalidTokenException.EXCEPTION;
+
+        if (!userInfo.getId().equals(oauthId)) {
+            throw UserIdMismatchException.EXCEPTION;
         }
     }
 
