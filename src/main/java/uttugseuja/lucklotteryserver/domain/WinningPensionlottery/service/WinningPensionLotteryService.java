@@ -2,7 +2,6 @@ package uttugseuja.lucklotteryserver.domain.WinningPensionlottery.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -81,7 +80,6 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
                 .build();
     }
 
-    // 연금복권 당첨 번호를 크롤링하여 반환합니다.
     public WinningPensionLotteryCrawlingDto crawlingWinningPensionLottery(String round) {
         try {
             Document document = getDocumentForRound(round);
@@ -153,8 +151,6 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
         winningPensionLotteryJdbcRepository.batchInsertWinningPensionLottery(winningPensionLotteryList);
 
     }
-
-
 
     private LotteryDrawDayDto getLottoDayAndRound(String dayAndRound){
 
