@@ -115,6 +115,31 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
         return getLottoDayAndRound(selectedText);
     }
 
+    private List<Integer> extractPensionWinningNumbers(Document document) {
+        List<Integer> winningNumber = new ArrayList<>();
+        Elements prizes = document.select(PRIZE_CSS_QUERY);
+        log.info("조 와 당첨 번호 및 보너스 점수 가져오기={}",prizes);
+        for (Element prize : prizes) {
+            extractNumbersFromPrize(prize, winningNumber);
+        }
+        return winningNumber;
+    }
+
+    private void extractNumbersFromPrize(Element prize, List<Integer> winningNumber) {
+        Elements lotteryGroup = prize.select(GROUP_CSS_QUERY);
+
+        if (!lotteryGroup.isEmpty()) {
+            String group = lotteryGroup.first().text();
+            winningNumber.add(Integer.parseInt(group));
+        }
+
+        Elements winNumbers = prize.select(WiN_NUM_CSS_QUERY);
+        for (Element number : winNumbers) {
+            Integer num = Integer.parseInt(number.text());
+            winningNumber.add(num);
+        }
+    }
+
 
     public void saveWinningPensionLottery(Integer starRound, Integer endRound) {
 
