@@ -58,64 +58,6 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
                 .orElseThrow(()-> WinningPensionLotteryNotFoundException.EXCEPTION);
     }
 
-    private WinningPensionLotteryCrawlingDto crawlingWinningPensionLottery(String round) {
-
-        List<Integer> winningNumber = new ArrayList<>();
-
-        try{
-            Connection conn = Jsoup.connect(PENSION_LOTTERY_URL+round);
-            Document document = null;
-            document = (Document) conn.get();
-            Element selectedOption = document.select(DRAW_TIME_CSS_QUERY).first();
-
-            String selectedText = selectedOption.text();
-            LotteryDrawDayDto lottoDayAndRound = getLottoDayAndRound(selectedText);
-
-            Elements prizes = document.select(PRIZE_CSS_QUERY);
-
-            for (Element prize : prizes) {
-                Elements lotteryGroup = prize.select(GROUP_CSS_QUERY);
-
-                if(!lotteryGroup.isEmpty()){
-                    String group = lotteryGroup.first().text();
-                    winningNumber.add(Integer.parseInt(group));
-                }
-                Elements winNumbers = prize.select(WiN_NUM_CSS_QUERY);
-
-                for (Element number : winNumbers) {
-                    Integer num = Integer.parseInt(number.text());
-                    winningNumber.add(num);
-                }
-            }
-            return new WinningPensionLotteryCrawlingDto(
-                    lottoDayAndRound.getRound(),
-                    lottoDayAndRound.getLotteryDrawTime(),
-                    winningNumber);
-
-        } catch (HttpStatusException e) {
-            throw PageAccessException.EXCEPTION;
-
-        } catch (IOException e) {
-            throw CrawlingException.EXCEPTION;
-
-        } catch (NullPointerException e) {
-            throw DataNotFoundException.EXCEPTION;
-        }
-    }
-
-    public void saveWinningPensionLottery(Integer starRound, Integer endRound) {
-
-        List<WinningPensionLottery> winningPensionLotteryList= new ArrayList<>();
-
-        for(int i = starRound; i<=endRound; i++){
-            WinningPensionLottery extracted = createWinningPensionLottery(String.valueOf(i));
-            winningPensionLotteryList.add(extracted);
-
-        }
-        winningPensionLotteryJdbcRepository.batchInsertWinningPensionLottery(winningPensionLotteryList);
-
-    }
-
     public WinningPensionLottery createWinningPensionLottery(String round)  {
 
         WinningPensionLotteryCrawlingDto process = crawlingWinningPensionLottery(round);
@@ -138,6 +80,62 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
                 .bonusSixthNum(nums.get(12))
                 .build();
     }
+
+    // 연금복권 당첨 번호를 크롤링하여 반환합니다.
+    public WinningPensionLotteryCrawlingDto crawlingWinningPensionLottery(String round) {
+        try {
+            Document document = getDocumentForRound(round);
+            LotteryDrawDayDto lottoDayAndRound = extractLottoDayAndRound(document);
+            List<Integer> winningNumber = extractPensionWinningNumbers(document);
+
+            return new WinningPensionLotteryCrawlingDto(
+                    lottoDayAndRound.getRound(),
+                    lottoDayAndRound.getLotteryDrawTime(),
+                    winningNumber);
+
+        } catch (HttpStatusException e) {
+            throw PageAccessException.EXCEPTION;
+
+        } catch (IOException e) {
+            throw CrawlingException.EXCEPTION;
+
+        } catch (NullPointerException | NumberFormatException e) {
+            throw DataNotFoundException.EXCEPTION;
+        }
+    }
+
+
+    // Prize 요소로부터 당첨 번호를 추출하고 리스트에 추가합니다.
+    private void extractNumbersFromPrize(Element prize, List<Integer> winningNumber) {
+        Elements lotteryGroup = prize.select(GROUP_CSS_QUERY);
+
+        if (!lotteryGroup.isEmpty()) {
+            String group = lotteryGroup.first().text();
+            winningNumber.add(Integer.parseInt(group));
+        }
+
+        Elements winNumbers = prize.select(WiN_NUM_CSS_QUERY);
+        for (Element number : winNumbers) {
+            Integer num = Integer.parseInt(number.text());
+            winningNumber.add(num);
+        }
+    }
+
+
+    public void saveWinningPensionLottery(Integer starRound, Integer endRound) {
+
+        List<WinningPensionLottery> winningPensionLotteryList= new ArrayList<>();
+
+        for(int i = starRound; i<=endRound; i++){
+            WinningPensionLottery extracted = createWinningPensionLottery(String.valueOf(i));
+            winningPensionLotteryList.add(extracted);
+
+        }
+        winningPensionLotteryJdbcRepository.batchInsertWinningPensionLottery(winningPensionLotteryList);
+
+    }
+
+
 
     private LotteryDrawDayDto getLottoDayAndRound(String dayAndRound){
 
