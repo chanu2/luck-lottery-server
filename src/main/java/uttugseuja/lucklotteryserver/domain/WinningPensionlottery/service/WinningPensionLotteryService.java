@@ -108,6 +108,14 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
         return Jsoup.connect(PENSION_LOTTERY_URL + round).get();
     }
 
+    private LotteryDrawDayDto extractLottoDayAndRound(Document document) {
+        Element selectedOption = document.select(DRAW_TIME_CSS_QUERY).first();
+        log.info("날짜와 회차 가져오기 ={}",selectedOption);
+        String selectedText = selectedOption.text();
+        return getLottoDayAndRound(selectedText);
+    }
+
+
     public void saveWinningPensionLottery(Integer starRound, Integer endRound) {
 
         List<WinningPensionLottery> winningPensionLotteryList= new ArrayList<>();
