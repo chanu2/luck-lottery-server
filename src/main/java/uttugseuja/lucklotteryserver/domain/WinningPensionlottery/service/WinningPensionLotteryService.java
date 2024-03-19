@@ -104,23 +104,9 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
         }
     }
 
-
-    // Prize 요소로부터 당첨 번호를 추출하고 리스트에 추가합니다.
-    private void extractNumbersFromPrize(Element prize, List<Integer> winningNumber) {
-        Elements lotteryGroup = prize.select(GROUP_CSS_QUERY);
-
-        if (!lotteryGroup.isEmpty()) {
-            String group = lotteryGroup.first().text();
-            winningNumber.add(Integer.parseInt(group));
-        }
-
-        Elements winNumbers = prize.select(WiN_NUM_CSS_QUERY);
-        for (Element number : winNumbers) {
-            Integer num = Integer.parseInt(number.text());
-            winningNumber.add(num);
-        }
+    private Document getDocumentForRound(String round) throws IOException {
+        return Jsoup.connect(PENSION_LOTTERY_URL + round).get();
     }
-
 
     public void saveWinningPensionLottery(Integer starRound, Integer endRound) {
 
