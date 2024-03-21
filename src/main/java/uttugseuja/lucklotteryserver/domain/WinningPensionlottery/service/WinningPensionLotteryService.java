@@ -2,7 +2,6 @@ package uttugseuja.lucklotteryserver.domain.WinningPensionlottery.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -58,64 +57,6 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
                 .orElseThrow(()-> WinningPensionLotteryNotFoundException.EXCEPTION);
     }
 
-    private WinningPensionLotteryCrawlingDto crawlingWinningPensionLottery(String round) {
-
-        List<Integer> winningNumber = new ArrayList<>();
-
-        try{
-            Connection conn = Jsoup.connect(PENSION_LOTTERY_URL+round);
-            Document document = null;
-            document = (Document) conn.get();
-            Element selectedOption = document.select(DRAW_TIME_CSS_QUERY).first();
-
-            String selectedText = selectedOption.text();
-            LotteryDrawDayDto lottoDayAndRound = getLottoDayAndRound(selectedText);
-
-            Elements prizes = document.select(PRIZE_CSS_QUERY);
-
-            for (Element prize : prizes) {
-                Elements lotteryGroup = prize.select(GROUP_CSS_QUERY);
-
-                if(!lotteryGroup.isEmpty()){
-                    String group = lotteryGroup.first().text();
-                    winningNumber.add(Integer.parseInt(group));
-                }
-                Elements winNumbers = prize.select(WiN_NUM_CSS_QUERY);
-
-                for (Element number : winNumbers) {
-                    Integer num = Integer.parseInt(number.text());
-                    winningNumber.add(num);
-                }
-            }
-            return new WinningPensionLotteryCrawlingDto(
-                    lottoDayAndRound.getRound(),
-                    lottoDayAndRound.getLotteryDrawTime(),
-                    winningNumber);
-
-        } catch (HttpStatusException e) {
-            throw PageAccessException.EXCEPTION;
-
-        } catch (IOException e) {
-            throw CrawlingException.EXCEPTION;
-
-        } catch (NullPointerException e) {
-            throw DataNotFoundException.EXCEPTION;
-        }
-    }
-
-    public void saveWinningPensionLottery(Integer starRound, Integer endRound) {
-
-        List<WinningPensionLottery> winningPensionLotteryList= new ArrayList<>();
-
-        for(int i = starRound; i<=endRound; i++){
-            WinningPensionLottery extracted = createWinningPensionLottery(String.valueOf(i));
-            winningPensionLotteryList.add(extracted);
-
-        }
-        winningPensionLotteryJdbcRepository.batchInsertWinningPensionLottery(winningPensionLotteryList);
-
-    }
-
     public WinningPensionLottery createWinningPensionLottery(String round)  {
 
         WinningPensionLotteryCrawlingDto process = crawlingWinningPensionLottery(round);
@@ -137,6 +78,78 @@ public class WinningPensionLotteryService implements WinningPensionLotteryUtils{
                 .bonusFifthNum(nums.get(11))
                 .bonusSixthNum(nums.get(12))
                 .build();
+    }
+
+    public WinningPensionLotteryCrawlingDto crawlingWinningPensionLottery(String round) {
+        try {
+            Document document = getDocumentForRound(round);
+            LotteryDrawDayDto lottoDayAndRound = extractLottoDayAndRound(document);
+            List<Integer> winningNumber = extractPensionWinningNumbers(document);
+
+            return new WinningPensionLotteryCrawlingDto(
+                    lottoDayAndRound.getRound(),
+                    lottoDayAndRound.getLotteryDrawTime(),
+                    winningNumber);
+
+        } catch (HttpStatusException e) {
+            throw PageAccessException.EXCEPTION;
+
+        } catch (IOException e) {
+            throw CrawlingException.EXCEPTION;
+
+        } catch (NullPointerException | NumberFormatException e) {
+            throw DataNotFoundException.EXCEPTION;
+        }
+    }
+
+    private Document getDocumentForRound(String round) throws IOException {
+        return Jsoup.connect(PENSION_LOTTERY_URL + round).get();
+    }
+
+    private LotteryDrawDayDto extractLottoDayAndRound(Document document) {
+        Element selectedOption = document.select(DRAW_TIME_CSS_QUERY).first();
+        log.info("날짜와 회차 가져오기 ={}",selectedOption);
+        String selectedText = selectedOption.text();
+        return getLottoDayAndRound(selectedText);
+    }
+
+    private List<Integer> extractPensionWinningNumbers(Document document) {
+        List<Integer> winningNumber = new ArrayList<>();
+        Elements prizes = document.select(PRIZE_CSS_QUERY);
+        log.info("조 와 당첨 번호 및 보너스 점수 가져오기={}",prizes);
+        for (Element prize : prizes) {
+            extractNumbersFromPrize(prize, winningNumber);
+        }
+        return winningNumber;
+    }
+
+    private void extractNumbersFromPrize(Element prize, List<Integer> winningNumber) {
+        Elements lotteryGroup = prize.select(GROUP_CSS_QUERY);
+
+        if (!lotteryGroup.isEmpty()) {
+            String group = lotteryGroup.first().text();
+            winningNumber.add(Integer.parseInt(group));
+        }
+
+        Elements winNumbers = prize.select(WiN_NUM_CSS_QUERY);
+        for (Element number : winNumbers) {
+            Integer num = Integer.parseInt(number.text());
+            winningNumber.add(num);
+        }
+    }
+
+
+    public void saveWinningPensionLottery(Integer starRound, Integer endRound) {
+
+        List<WinningPensionLottery> winningPensionLotteryList= new ArrayList<>();
+
+        for(int i = starRound; i<=endRound; i++){
+            WinningPensionLottery extracted = createWinningPensionLottery(String.valueOf(i));
+            winningPensionLotteryList.add(extracted);
+
+        }
+        winningPensionLotteryJdbcRepository.batchInsertWinningPensionLottery(winningPensionLotteryList);
+
     }
 
     private LotteryDrawDayDto getLottoDayAndRound(String dayAndRound){
