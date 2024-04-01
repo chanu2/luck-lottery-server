@@ -85,7 +85,7 @@ public class UserService {
 
             if(!updateProfile.equals(nowProfilePath)){
                 deleteUserProfilePath(user.getProfilePath());
-                user.updateProfilePath(null);
+                user.updateProfilePath(updateProfile);
             }
         }
 
