@@ -12,6 +12,6 @@ public class ChangeUserInfoRequest {
     @Nullable
     private String profilePath;
 
-    @NotNull
+    @Nullable
     private String nickname;
 }
