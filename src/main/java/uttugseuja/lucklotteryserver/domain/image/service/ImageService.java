@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ImageService implements ImageUtils{
 
     @Value("${aws.s3.bucket}")
@@ -44,7 +46,13 @@ public class ImageService implements ImageUtils{
             throw FileOversizeException.EXCEPTION;
         }
         String originalFilename = file.getOriginalFilename();
+        log.info("=====================originalFilename===========================");
+        log.info("originalFilename ={}",originalFilename);
+
         String ext = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+
+        log.info("=====================ext===========================");
+        log.info("ext ={}",ext);
 
         if (!(ext.equals("jpg")
                 || ext.equals("HEIC")
