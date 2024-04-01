@@ -89,7 +89,7 @@ public class UserService {
             }
         }
 
-        if(!changeUserInfoRequest.getNickname().equals(user.getNickname())){
+        if(!(changeUserInfoRequest.getNickname() == null)){
             user.updateNickname(changeUserInfoRequest.getNickname());
         }
 
