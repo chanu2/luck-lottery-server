@@ -45,21 +45,17 @@ public class UserService {
     @Transactional
     public void changeLotteryNotificationStatus(ChangeNotificationStatusRequest changeNotificationStatusRequest) {
         User user = userUtils.getUserFromSecurityContext();
-
         user.updateLotteryNotificationStatus(changeNotificationStatusRequest.getNotificationStatus());
     }
 
     @Transactional
     public void changePensionLotteryNotificationStatus(ChangeNotificationStatusRequest changeNotificationStatusRequest) {
         User user = userUtils.getUserFromSecurityContext();
-
         user.updatePensionLotteryNotificationStatus(changeNotificationStatusRequest.getNotificationStatus());
     }
 
     private void deleteUserProfilePath(String profilePath){
-
         imageUtils.delete(profilePath);
-
     }
 
     public UserInfoResponse getUserInfo() {
@@ -73,29 +69,24 @@ public class UserService {
         String nowProfilePath = user.getProfilePath();
         String updateProfile = changeUserInfoRequest.getProfilePath();
 
-        if(updateProfile == null && nowProfilePath != null) {
-
+        if (updateProfile == null && nowProfilePath != null) {
             deleteUserProfilePath(user.getProfilePath());
             user.updateProfilePath(null);
-
-        }else if(updateProfile != null && nowProfilePath == null) {
+        }else if (updateProfile != null && nowProfilePath == null) {
             user.updateProfilePath(updateProfile);
+        }else if (updateProfile != null && nowProfilePath != null) {
 
-        }else if(updateProfile != null && nowProfilePath != null){
-
-            if(!updateProfile.equals(nowProfilePath)){
+            if (!updateProfile.equals(nowProfilePath)) {
                 deleteUserProfilePath(user.getProfilePath());
                 user.updateProfilePath(updateProfile);
             }
+
         }
 
-        if(!(changeUserInfoRequest.getNickname() == null)){
+        if (!changeUserInfoRequest.getNickname().equals(user.getNickname())) {
             user.updateNickname(changeUserInfoRequest.getNickname());
         }
 
         return new UserInfoResponse(user.getUserInfo());
-
     }
-
-
 }
