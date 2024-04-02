@@ -45,7 +45,7 @@ public class CredentialService {
     public void logoutUser() {
         User user = userUtils.getUserFromSecurityContext();
         refreshTokenRedisEntityRepository.deleteById(user.getId().toString());
-        user.logout();
+        user.handleDeleteDeviceToken();
     }
 
     @Transactional
@@ -186,12 +186,12 @@ public class CredentialService {
             verifyUserOauthIdWithAccessToken(oauthAccessToken, userOauthId, oauthStrategy);
         }
 
+        user.handleDeleteDeviceToken();
+
         deleteUserData(user);
 
         UnlinkRequest unlinkRequest = createUnlinkRequest(provider, oauthAccessToken, userOauthId);
         oauthStrategy.unLink(unlinkRequest);
-
-        user.withdrawal();
     }
 
     private void verifyUserOauthIdWithAccessToken(String oauthAccessToken, String oauthId, OauthStrategy oauthStrategy) {

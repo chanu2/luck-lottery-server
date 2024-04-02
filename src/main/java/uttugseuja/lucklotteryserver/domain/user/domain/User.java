@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
+import uttugseuja.lucklotteryserver.domain.lottery.domain.Lottery;
 import uttugseuja.lucklotteryserver.domain.notification.event.DeviceTokenEvent;
 import uttugseuja.lucklotteryserver.domain.pensionlottery.domain.PensionLottery;
 import uttugseuja.lucklotteryserver.domain.user.domain.vo.UserInfoVO;
@@ -44,6 +45,9 @@ public class User {
     private Boolean lotteryNotificationStatus;
 
     private Boolean pensionLotteryNotificationStatus;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private List<Lottery> lotteries = new ArrayList<>();
 
     @Builder
     public User(
@@ -95,15 +99,7 @@ public class User {
         return User.builder().id(userId).build();
     }
 
-    public void logout() {
-        handleDeleteDeviceToken();
-    }
-
-    public void withdrawal() {
-        handleDeleteDeviceToken();
-    }
-
-    private void handleDeleteDeviceToken() {
+    public void handleDeleteDeviceToken() {
         DeviceTokenEvent deviceTokenEvent = new DeviceTokenEvent(User.of(id));
         Events.raise(deviceTokenEvent);
     }
