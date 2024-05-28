@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static uttugseuja.lucklotteryserver.global.error.exception.ErrorCode.METHOD_NOT_ALLOWED;
 import static uttugseuja.lucklotteryserver.global.error.exception.ErrorCode.URL_INPUT_ERROR;
 
 @RestControllerAdvice
@@ -88,6 +90,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
+                                                                         HttpHeaders headers,
+                                                                         HttpStatusCode status,
+                                                                         WebRequest request) {
+
+        ServletWebRequest servletWebRequest = (ServletWebRequest) request;
+        String url = servletWebRequest.getRequest().getRequestURI();
+        ErrorResponse errorResponse = new ErrorResponse(status.value(), METHOD_NOT_ALLOWED.getReason(), url);
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorResponse);
+    }
+
     @Override
     protected ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex,
                                                                     HttpHeaders headers,
