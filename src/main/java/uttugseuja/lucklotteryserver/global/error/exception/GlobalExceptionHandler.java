@@ -15,11 +15,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import uttugseuja.lucklotteryserver.global.error.ErrorResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static uttugseuja.lucklotteryserver.global.error.exception.ErrorCode.URL_INPUT_ERROR;
 
 @RestControllerAdvice
 @Slf4j
@@ -84,6 +87,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 new ErrorResponse(status.value(), errorsToJsonString, url);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+    @Override
+    protected ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex,
+                                                                    HttpHeaders headers,
+                                                                    HttpStatusCode status,
+                                                                    WebRequest request) {
+        ServletWebRequest servletWebRequest = (ServletWebRequest) request;
+        String url = servletWebRequest.getRequest().getRequestURI();
+        ErrorResponse errorResponse = new ErrorResponse(status.value(), URL_INPUT_ERROR.getReason(), url);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
 }
