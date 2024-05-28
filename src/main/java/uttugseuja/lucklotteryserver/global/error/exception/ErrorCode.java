@@ -31,6 +31,8 @@ public enum ErrorCode {
     PROFILE_IMAGE_NOT_FOUND(404,  "프로필 이미지를 찾을 수 없습니다"),
     BAD_PROFILE_PATH(404,  "profile path error"),
     DUPLICATE_NUMBER(404, "숫자가 중복 되었습니다."),
+    URL_INPUT_ERROR(404,"url 입력 오류입니다"),
+    METHOD_NOT_ALLOWED(405,"http 메소드가 잘못되었습니다."),
 
     /* 500 */
     INTERNAL_SERVER_ERROR(500,"서버 에러"),
